@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    position: relative;
+    overflow-x: hidden;
+  }
+  
+  /* Global noise texture overlay */
+  /* We use an embedded SVG data URI for turbulence to achieve the organic artifact */
+  body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.05;
+    background: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+  }
+
+  /* Typography basics mapped from config */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  
+  .font-outfit {
+    font-family: 'Outfit', sans-serif;
+  }
+
+  .font-serif-italic {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+  }
+
+  .font-mono-system {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+@layer utilities {
+  .clip-path-bottom {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+  
+  .text-border {
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.4);
+    color: transparent;
+  }
+
+  .magnetic-hover {
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  
+  .magnetic-hover:hover {
+    transform: scale(1.05);
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
