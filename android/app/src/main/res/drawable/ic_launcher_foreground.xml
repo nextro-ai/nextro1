@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Cara de mochi rosita -->
+    <path
+        android:fillColor="#FFD9E3"
+        android:pathData="M54,30 C72,30 82,42 82,56 C82,72 69,80 54,80 C39,80 26,72 26,56 C26,42 36,30 54,30 Z" />
+
+    <!-- Orejitas -->
+    <path
+        android:fillColor="#FFD9E3"
+        android:pathData="M36,36 C33,28 38,23 43,26 C46,28 46,33 44,36 Z" />
+    <path
+        android:fillColor="#FFD9E3"
+        android:pathData="M72,36 C75,28 70,23 65,26 C62,28 62,33 64,36 Z" />
+
+    <!-- Ojitos -->
+    <path
+        android:fillColor="#6D5D57"
+        android:pathData="M43,53 m-3.4,0 a3.4,3.4 0 1,1 6.8,0 a3.4,3.4 0 1,1 -6.8,0" />
+    <path
+        android:fillColor="#6D5D57"
+        android:pathData="M65,53 m-3.4,0 a3.4,3.4 0 1,1 6.8,0 a3.4,3.4 0 1,1 -6.8,0" />
+
+    <!-- Mejillas sonrojadas -->
+    <path
+        android:fillColor="#F8AEC4"
+        android:pathData="M36,61 m-4,0 a4,2.8 0 1,1 8,0 a4,2.8 0 1,1 -8,0" />
+    <path
+        android:fillColor="#F8AEC4"
+        android:pathData="M72,61 m-4,0 a4,2.8 0 1,1 8,0 a4,2.8 0 1,1 -8,0" />
+
+    <!-- Boquita sonriente -->
+    <path
+        android:strokeColor="#6D5D57"
+        android:strokeWidth="2.2"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M50,61 Q54,65 58,61" />
+</vector>

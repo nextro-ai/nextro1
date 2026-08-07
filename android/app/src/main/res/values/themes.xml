@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.MochiGuard" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/pink_strong</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/pink_pastel</item>
+        <item name="colorOnPrimaryContainer">@color/text_primary</item>
+        <item name="colorSecondary">@color/mint_deep</item>
+        <item name="colorSecondaryContainer">@color/mint</item>
+        <item name="colorTertiary">@color/lavender_deep</item>
+        <item name="colorTertiaryContainer">@color/lavender</item>
+        <item name="android:colorBackground">@color/cream_bg</item>
+        <item name="colorSurface">@color/cream_card</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorSurfaceVariant">@color/pink_soft</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+        <item name="android:statusBarColor">@color/cream_bg</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">@color/cream_card</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+    </style>
+</resources>
