@@ -29,13 +29,13 @@ class SettingsFragment : Fragment() {
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
 
         binding.cardUsagePermission.setOnClickListener {
-            startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
+            openSettingsScreen(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
         }
         binding.cardAccessibility.setOnClickListener {
-            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+            openSettingsScreen(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
         }
         binding.cardOverlay.setOnClickListener {
-            startActivity(
+            openSettingsScreen(
                 Intent(
                     Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                     Uri.parse("package:${requireContext().packageName}")
@@ -77,6 +77,28 @@ class SettingsFragment : Fragment() {
         } else {
             binding.textFocusDescription.text = getString(R.string.focus_description)
             binding.buttonFocus.text = getString(R.string.focus_start)
+        }
+    }
+
+    /**
+     * Abre la pantalla de ajustes del sistema pedida; si el fabricante no la
+     * expone (algunas capas como MIUI), cae a la ficha de la app y como último
+     * recurso a los ajustes generales.
+     */
+    private fun openSettingsScreen(intent: Intent) {
+        try {
+            startActivity(intent)
+        } catch (_: Exception) {
+            try {
+                startActivity(
+                    Intent(
+                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                        Uri.parse("package:${requireContext().packageName}")
+                    )
+                )
+            } catch (_: Exception) {
+                startActivity(Intent(Settings.ACTION_SETTINGS))
+            }
         }
     }
 
