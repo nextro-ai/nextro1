@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mochi Guard</string>
+    <string name="app_tagline">Tu tiempo, tu calma 🌸</string>
+
+    <!-- Navegación -->
+    <string name="nav_today">Hoy</string>
+    <string name="nav_apps">Apps</string>
+    <string name="nav_settings">Ajustes</string>
+
+    <!-- Panel de hoy -->
+    <string name="dashboard_title">🌸 Mochi Guard</string>
+    <string name="today_screen_time">Tiempo de pantalla hoy</string>
+    <string name="top_apps_today">Apps más usadas hoy 🍡</string>
+    <string name="empty_usage">Todavía no hay datos de hoy ✨</string>
+    <string name="no_usage_permission">Concede el permiso de "Acceso a uso" en Ajustes para ver tu tiempo de pantalla 🥺</string>
+
+    <!-- Lista de apps -->
+    <string name="apps_title">Mis apps 🎀</string>
+    <string name="apps_subtitle">Activa el bloqueo o ponles un límite diario</string>
+    <string name="usage_today">Hoy: %1$s</string>
+    <string name="usage_none">Sin uso hoy</string>
+    <string name="block_label">Bloquear</string>
+    <string name="limit_none">⏰ Sin límite</string>
+    <string name="limit_minutes">⏰ %1$d min/día</string>
+    <string name="limit_dialog_title">Límite diario para %1$s</string>
+    <string name="limit_save">Guardar</string>
+    <string name="limit_remove">Quitar límite</string>
+    <string name="cancel">Cancelar</string>
+
+    <!-- Modo concentración -->
+    <string name="focus_title">Modo concentración 🌙</string>
+    <string name="focus_description">Bloquea temporalmente todas tus apps vigiladas (las bloqueadas o con límite) para que puedas concentrarte.</string>
+    <string name="focus_start">Empezar</string>
+    <string name="focus_stop">Terminar ahora</string>
+    <string name="focus_remaining">Modo concentración activo · quedan %1$d min 🌙</string>
+    <string name="focus_dialog_title">¿Cuánto tiempo? 🌙</string>
+    <string name="focus_dialog_message">Durante este tiempo tus apps vigiladas estarán bloqueadas.</string>
+
+    <!-- Ajustes / permisos -->
+    <string name="settings_title">Ajustes 🌷</string>
+    <string name="permissions_section">Permisos mágicos ✨</string>
+    <string name="permission_granted">✅ Concedido</string>
+    <string name="permission_missing">💤 Pendiente · toca para activar</string>
+    <string name="usage_permission_title">Acceso a uso 📊</string>
+    <string name="usage_permission_desc">Necesario para medir tu tiempo de pantalla y aplicar los límites diarios.</string>
+    <string name="accessibility_title">Servicio de bloqueo 🧸</string>
+    <string name="accessibility_desc">Necesario para detectar qué app abres y mostrar la pantalla de descanso. Actívalo en Accesibilidad → Mochi Guard.</string>
+    <string name="overlay_title">Mostrar sobre otras apps 🎈</string>
+    <string name="overlay_desc">Recomendado para que la pantalla de bloqueo pueda aparecer al instante.</string>
+    <string name="about_text">Hecho con 💕 para cuidar tu tiempo. Mochi Guard no envía tus datos a ningún sitio: todo se queda en tu teléfono.</string>
+
+    <!-- Pantalla de bloqueo -->
+    <string name="blocked_title_blocked">¡App bloqueada!</string>
+    <string name="blocked_message_blocked">Decidiste bloquear %1$s. ¡Tú puedes, ánimo! 💪🌸</string>
+    <string name="blocked_title_limit">¡Hora de descansar!</string>
+    <string name="blocked_message_limit">Ya usaste todo tu tiempo de hoy en %1$s. Mañana habrá más ☁️💤</string>
+    <string name="blocked_title_focus">Modo concentración</string>
+    <string name="blocked_message_focus">%1$s está descansando mientras tú te concentras. ¡Sigue así! ✨</string>
+    <string name="blocked_go_home">Volver al inicio 🏡</string>
+
+    <!-- Servicio de accesibilidad -->
+    <string name="accessibility_service_label">Mochi Guard · Bloqueo de apps</string>
+    <string name="accessibility_service_description">Mochi Guard usa este servicio únicamente para saber qué app está en primer plano y mostrar la pantalla de descanso cuando una app está bloqueada o superó su límite diario. No lee el contenido de tu pantalla ni recopila datos.</string>
+</resources>

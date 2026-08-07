@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="MochiNavIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/pink_pastel</item>
+    </style>
+
+    <style name="MochiCard" parent="Widget.Material3.CardView.Filled">
+        <item name="cardCornerRadius">24dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="cardBackgroundColor">@color/cream_card</item>
+    </style>
+
+    <style name="MochiButton" parent="Widget.Material3.Button">
+        <item name="cornerRadius">24dp</item>
+        <item name="backgroundTint">@color/pink_strong</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="MochiButtonSoft" parent="Widget.Material3.Button.TonalButton">
+        <item name="cornerRadius">20dp</item>
+        <item name="backgroundTint">@color/pink_soft</item>
+        <item name="android:textColor">@color/pink_deep</item>
+    </style>
+</resources>
