@@ -50,6 +50,10 @@ class AppsFragment : Fragment() {
     private fun loadApps() {
         val context = requireContext().applicationContext
         binding.progressLoading.visibility = View.VISIBLE
+        // Captura la vista ahora: si el usuario cambia de pestaña mientras
+        // se carga la lista, _binding se vuelve null y no debe tocarse
+        // desde el hilo de fondo.
+        val rootView = binding.root
         executor.execute {
             val pm = context.packageManager
             val usage = if (UsageStatsHelper.hasUsageAccess(context)) {
@@ -84,8 +88,8 @@ class AppsFragment : Fragment() {
                 )
                 .toList()
 
-            binding.root.post {
-                if (_binding == null) return@post
+            rootView.post {
+                if (_binding == null || !isAdded) return@post
                 binding.progressLoading.visibility = View.GONE
                 adapter = AppsAdapter(entries)
                 binding.recyclerApps.adapter = adapter

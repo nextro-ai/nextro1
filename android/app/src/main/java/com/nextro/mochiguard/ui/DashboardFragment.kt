@@ -56,6 +56,9 @@ class DashboardFragment : Fragment() {
         }
         binding.textNoPermission.visibility = View.GONE
 
+        // Captura la vista ahora: el hilo de fondo no debe leer `binding`
+        // porque el fragmento puede destruirse mientras se calcula el uso.
+        val rootView = binding.root
         executor.execute {
             val usage = try {
                 UsageStatsHelper.usageTodayByApp(context)
@@ -83,8 +86,8 @@ class DashboardFragment : Fragment() {
                 Triple(label, icon, millis)
             }
 
-            binding.root.post {
-                if (_binding == null) return@post
+            rootView.post {
+                if (_binding == null || !isAdded) return@post
                 binding.textTotalTime.text = UsageStatsHelper.formatDuration(total)
 
                 // Pop suave del contador principal
