@@ -39,8 +39,9 @@ CUTS = {
     },
     "trabajo": {
         "song": "5-trabajo", "title": "Latin Funk Groove", "bpm": 121.8,
-        "parts": [(139.094, 164.710)],
-        "cues": {"dip": 143.035, "drop": 146.976},
+        # Phase corrected by the trabajo builder: the strong kick of bar 1 is one beat later than beatgrid.py said.
+        "parts": [(139.587, 165.203)],
+        "cues": {"dip": 143.528, "drop": 147.469},
     },
     "rebrand": {
         "song": "6-rebrand", "title": "Cold to Warm", "bpm": 92.2,
