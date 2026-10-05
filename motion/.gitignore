@@ -1,0 +1,3 @@
+build/
+out/*
+!out/nextro-motion-movil.mp4

@@ -1,0 +1,712 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1080">
+<title>NEXTRO — Motion</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+  :root {
+    --void: #050505;
+    --onyx: #171717;
+    --silver: #A3A3A3;
+    --blue: #3B82F6;
+    --cream: #FAFAFA;
+    --charcoal: #0A0A0A;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--void); }
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: var(--cream);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
+    font-kerning: normal;
+  }
+  #stage { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: hidden; background: var(--void); transform-origin: 0 0; }
+  .layer { position: absolute; inset: 0; }
+  .scene { position: absolute; inset: 0; visibility: hidden; opacity: 0; }
+  .abs { position: absolute; }
+  .row { position: absolute; left: 0; right: 0; text-align: center; white-space: nowrap; }
+  .mono { font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: .22em; font-weight: 500; }
+  .serif { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 400; }
+  .outfit { font-family: 'Outfit', sans-serif; }
+  .blue { color: var(--blue); }
+  .silver { color: var(--silver); }
+  .ib { display: inline-block; }
+
+  /* masks: content slides inside a clipped box */
+  .m { display: inline-block; overflow: hidden; vertical-align: top; padding: .16em .08em; margin: -.16em -.08em; }
+  .mi { display: inline-block; will-change: transform; }
+  .line { display: block; }
+
+  /* ---------- background ---------- */
+  #grid {
+    background-image:
+      linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+    background-size: 120px 120px;
+    background-position: 0 0;
+    -webkit-mask-image: radial-gradient(ellipse 70% 55% at 50% 48%, #000 30%, transparent 100%);
+            mask-image: radial-gradient(ellipse 70% 55% at 50% 48%, #000 30%, transparent 100%);
+  }
+  #glow {
+    position: absolute; left: -260px; top: 160px; width: 1600px; height: 1600px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(59,130,246,.20) 0%, rgba(59,130,246,.07) 32%, transparent 62%);
+  }
+  #glow2 {
+    position: absolute; left: 200px; top: 900px; width: 1400px; height: 1400px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(59,130,246,.10) 0%, transparent 60%);
+  }
+
+  .dot { width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 40px rgba(59,130,246,.8); }
+  .ring { width: 120px; height: 120px; margin: -60px 0 0 -60px; border-radius: 50%; border: 2px solid var(--blue); opacity: 0; }
+
+  .kicker { font-size: 24px; color: var(--blue); }
+
+  /* ---------- S2 ---------- */
+  #s2-panel { background: var(--blue); transform-origin: 50% 100%; clip-path: circle(130% at 50% 50%); }
+  #s2-ia {
+    left: 260px; top: 260px; font-size: 1400px; line-height: 1; font-weight: 800; letter-spacing: -.06em;
+    color: transparent; -webkit-text-stroke: 3px rgba(255,255,255,.3); white-space: nowrap;
+  }
+  .bl { display: block; font-weight: 800; letter-spacing: -.055em; line-height: .86; color: #fff; white-space: nowrap; }
+
+  /* ---------- S3 ---------- */
+  #s3-light { clip-path: inset(57.92% 17.6% 42.08% 17.6% round 4px); background: #c9c8cd; }
+  #s3-blur { position: absolute; left: -10%; top: -10%; width: 120%; height: 120%; object-fit: cover; filter: blur(50px) saturate(.9); }
+  #s3-img {
+    position: absolute; left: 0; top: 103px; width: 1080px; height: 1622px; transform-origin: 50% 51.7%;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 9%, #000 90%, transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0, #000 9%, #000 90%, transparent 100%);
+  }
+
+  /* ---------- S4 cards ---------- */
+  .card {
+    position: absolute; left: 80px; width: 920px; height: 216px; border-radius: 48px;
+    background: #0e0e10; border: 1.5px solid rgba(255,255,255,.09); overflow: hidden;
+  }
+  .card .ic {
+    position: absolute; left: 34px; top: 46px; width: 124px; height: 124px; border-radius: 50%;
+    background: rgba(59,130,246,.12); border: 1.5px solid rgba(59,130,246,.35);
+    display: flex; align-items: center; justify-content: center; color: var(--blue);
+  }
+  .card .ic svg { width: 60px; height: 60px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .card .ic svg * { stroke-dasharray: 1; stroke-dashoffset: 1; }
+  .card .ttl { position: absolute; left: 196px; top: 50px; font-size: 56px; font-weight: 700; letter-spacing: -.03em; color: #fff; white-space: nowrap; }
+  .card .dsc { position: absolute; left: 198px; top: 128px; font-size: 33px; font-weight: 400; color: var(--silver); white-space: nowrap; }
+  .card .num { position: absolute; right: 40px; top: 38px; font-size: 22px; color: rgba(163,163,163,.6); }
+  .card .bars { position: absolute; right: 44px; bottom: 40px; display: flex; align-items: flex-end; gap: 10px; height: 90px; }
+  .card .bars i { display: block; width: 18px; border-radius: 4px; background: var(--blue); transform-origin: 50% 100%; }
+  .card .sweep { position: absolute; top: 0; bottom: 0; left: 0; width: 360px; background: linear-gradient(100deg, transparent, rgba(255,255,255,.10), transparent); transform: translateX(-400px) skewX(-18deg); }
+  #s4-tick { top: 1588px; left: 0; white-space: nowrap; font-size: 26px; color: rgba(163,163,163,.75); }
+  #s4-tick b { color: var(--blue); font-weight: 500; margin: 0 28px; }
+
+  /* ---------- S5 ---------- */
+  #s5-marq, #s5-marq2 {
+    top: 150px; left: 0; white-space: nowrap; font-size: 330px; line-height: 1; font-weight: 800; letter-spacing: -.06em;
+    color: transparent; -webkit-text-stroke: 2px rgba(255,255,255,.16);
+  }
+  #s5-card { left: 150px; top: 540px; width: 780px; height: 860px; border-radius: 48px; overflow: hidden; background: #111; clip-path: inset(50% 0% 50% 0% round 48px); }
+  .slide { position: absolute; inset: 0; overflow: hidden; clip-path: inset(100% 0% 0% 0%); }
+  .slide img, .slide canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  #sl1 { clip-path: inset(0% 0% 0% 0%); }
+  #s5-edge { position: absolute; inset: 0; border-radius: 48px; border: 1.5px solid rgba(255,255,255,.14); pointer-events: none; }
+  #s5-meta { left: 84px; top: 1440px; width: 912px; height: 140px; }
+  .meta { position: absolute; left: 0; top: 0; }
+  .meta .cat { font-size: 22px; color: var(--blue); }
+  .meta .tt { margin-top: 14px; font-size: 64px; font-weight: 700; letter-spacing: -.035em; color: #fff; white-space: nowrap; }
+  #s5-count { position: absolute; right: 0; top: 0; font-size: 22px; color: rgba(163,163,163,.8); display: flex; }
+  #s5-count .slot { display: inline-block; height: 1.3em; overflow: hidden; vertical-align: top; }
+  #s5-count .reel { display: flex; flex-direction: column; line-height: 1.3em; }
+
+  /* ---------- S6 ---------- */
+  #s6-line { left: 122px; top: 1000px; width: 4px; height: 450px; border-radius: 2px; background: linear-gradient(to bottom, var(--blue), rgba(59,130,246,.25)); transform-origin: 50% 0%; }
+  .node { position: absolute; left: 124px; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%; border: 3px solid var(--blue); background: var(--void); }
+  .node-ring { position: absolute; left: 124px; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%; border: 2px solid var(--blue); opacity: 0; }
+  .step { position: absolute; left: 196px; }
+  .step .sn { font-size: 20px; color: rgba(163,163,163,.7); }
+  .step .st { font-size: 76px; font-weight: 700; letter-spacing: -.035em; color: #fff; line-height: 1; margin-top: 6px; white-space: nowrap; }
+  .step .sd { font-size: 31px; font-weight: 300; color: var(--silver); margin-top: 12px; white-space: nowrap; }
+
+  /* ---------- S7 ---------- */
+  #s7-panel { left: 0; top: 200px; width: 1080px; height: 1800px; background: var(--onyx); border-radius: 100px 100px 0 0; border-top: 1.5px solid rgba(255,255,255,.07); }
+  #s7-pill {
+    left: 84px; top: 150px; display: flex; align-items: center; gap: 22px; padding: 22px 36px;
+    border-radius: 999px; background: rgba(255,255,255,.05); border: 1.5px solid rgba(255,255,255,.1);
+    font-size: 24px; color: #fff;
+  }
+  #s7-pill .pd { position: relative; width: 22px; height: 22px; }
+  #s7-pill .pd i { position: absolute; inset: 0; border-radius: 50%; background: var(--blue); }
+  .ct .lb { font-size: 22px; color: var(--blue); }
+  .ct .vl { margin-top: 18px; font-weight: 300; color: #e8e8e8; white-space: nowrap; letter-spacing: -.01em; }
+  .ct .ul { margin-top: 18px; height: 1.5px; background: rgba(255,255,255,.85); transform-origin: 0 50%; }
+  #s7-cta {
+    left: 84px; top: 1196px; display: flex; align-items: center; gap: 24px; padding: 34px 54px; border-radius: 999px;
+    background: var(--blue); color: #fff; font-size: 40px; font-weight: 600; letter-spacing: -.01em; white-space: nowrap;
+    box-shadow: 0 24px 70px rgba(59,130,246,.35);
+  }
+  #s7-cta svg { width: 44px; height: 44px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  #s7-end { background: var(--void); clip-path: inset(100% 0% 0% 0%); }
+
+  /* ---------- HUD ---------- */
+  #hud { color: rgba(250,250,250,.55); pointer-events: none; }
+  .corner { position: absolute; width: 44px; height: 44px; border-color: currentColor; border-style: solid; border-width: 0; opacity: .7; }
+  .c-tl { left: 48px; top: 48px; border-top-width: 2px; border-left-width: 2px; }
+  .c-tr { right: 48px; top: 48px; border-top-width: 2px; border-right-width: 2px; }
+  .c-bl { left: 48px; bottom: 48px; border-bottom-width: 2px; border-left-width: 2px; }
+  .c-br { right: 48px; bottom: 48px; border-bottom-width: 2px; border-right-width: 2px; }
+  .hud-t { position: absolute; font-size: 19px; letter-spacing: .24em; white-space: nowrap; }
+  #hud-prog { position: absolute; left: 112px; right: 112px; bottom: 60px; height: 2px; background: rgba(255,255,255,.12); }
+  #hud-prog i { position: absolute; inset: 0; background: var(--blue); transform-origin: 0 50%; transform: scaleX(0); }
+
+  #grain { position: absolute; inset: 0; width: 1080px; height: 1920px; opacity: .07; pointer-events: none; }
+  #vignette { background: radial-gradient(ellipse 85% 70% at 50% 50%, transparent 55%, rgba(0,0,0,.55) 100%); pointer-events: none; }
+  #fade { background: #000; opacity: 0; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- ===== persistent background ===== -->
+  <div id="bg" class="layer">
+    <div id="glow"></div>
+    <div id="glow2"></div>
+    <div id="grid" class="layer"></div>
+  </div>
+
+  <!-- ===== S1 · La pregunta ===== -->
+  <section class="scene" id="s1">
+    <div id="s1-dot" class="abs dot" style="left:540px;top:960px"></div>
+    <div id="s1-ring" class="abs ring" style="left:540px;top:960px"></div>
+    <div id="s1-txt" class="layer">
+      <div class="row" style="top:556px"><span class="mono kicker ib" id="s1-k">( La pregunta )</span></div>
+      <div class="row" style="top:640px"><p class="ib" id="s1-q1" style="font-size:48px;font-weight:500;color:var(--silver)">La mayoría de las empresas preguntan:</p></div>
+      <div class="row" style="top:760px">
+        <h2 class="serif ib" id="s1-q2" style="font-size:172px;line-height:.96;color:#fff">
+          <span class="line"><span class="blue">¿</span>qué es la</span>
+          <span class="line">Inteligencia</span>
+          <span class="line">Artificial<span class="blue">?</span></span>
+        </h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== S2 · La respuesta ===== -->
+  <section class="scene" id="s2">
+    <div id="s2-panel" class="layer"></div>
+    <div id="s2-content" class="layer">
+      <div class="abs" id="s2-ia">IA</div>
+      <div class="abs" style="left:86px;top:470px"><span class="mono ib" id="s2-k" style="font-size:24px;color:rgba(5,5,5,.62)">( La respuesta )</span></div>
+      <p class="abs" id="s2-a1" style="left:84px;top:540px;font-size:54px;font-weight:600;color:#fff;letter-spacing:-.02em">Nosotros te mostramos:</p>
+      <div class="abs" id="s2-big" style="left:70px;top:650px">
+        <div class="bl" id="w-como" style="font-size:232px">cómo</div>
+        <div class="bl" id="w-usarla" style="font-size:232px">usarla</div>
+        <div class="bl serif" id="w-para" style="font-size:210px;font-weight:400;letter-spacing:-.01em;line-height:.82;color:var(--void);padding-left:12px">para</div>
+        <div class="bl" id="w-ganar" style="font-size:248px;color:var(--void)">ganar.</div>
+        <div id="s2-under" style="margin:22px 0 0 8px;width:780px;height:16px;background:var(--void);transform-origin:0 50%"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== S3 · NEXTRO ===== -->
+  <section class="scene" id="s3">
+    <div id="s3-dark" class="layer">
+      <div class="row" style="top:690px"><span class="serif ib" id="s3-y" style="font-size:88px;color:rgba(163,163,163,.8)">y esto es</span></div>
+      <div class="row" style="top:806px"><span class="ib" id="s3-word" style="font-size:252px;font-weight:800;letter-spacing:-.06em;line-height:1;color:#fff">NEXTRO</span></div>
+      <div id="s3-line" class="abs" style="left:190px;top:1112px;width:700px;height:4px;border-radius:2px;background:var(--blue)"></div>
+      <div id="s3-dot" class="abs dot" style="left:540px;top:960px"></div>
+      <div id="s3-ring" class="abs ring" style="left:540px;top:960px"></div>
+      <div class="row" style="top:1166px"><span class="mono ib" id="s3-tag" style="font-size:24px;color:var(--silver)">Agencia de Diseño y Desarrollo Web</span></div>
+    </div>
+    <div id="s3-light" class="layer">
+      <img id="s3-blur" src="../public/logo-3d.png" alt="">
+      <img id="s3-img" src="../public/logo-3d.png" alt="">
+      <div class="row" style="top:560px"><span class="mono ib" id="s3-l1" style="font-size:22px;color:rgba(10,10,10,.55)">Diseño premium · Alta conversión</span></div>
+      <div class="row" style="top:1150px">
+        <h2 class="serif ib" id="s3-l2" style="font-size:118px;line-height:.98;color:var(--charcoal)">
+          <span class="line">Naturaleza es</span>
+          <span class="line">el Algoritmo</span>
+        </h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== S4 · Servicios ===== -->
+  <section class="scene" id="s4">
+    <div class="abs" style="left:86px;top:330px"><span class="mono kicker ib" id="s4-k">( 02 ) Servicios</span></div>
+    <h2 class="abs" id="s4-t1" style="left:78px;top:382px;font-size:150px;font-weight:800;letter-spacing:-.055em;line-height:1;white-space:nowrap">Soluciones</h2>
+    <h2 class="abs serif blue" id="s4-t2" style="left:86px;top:520px;font-size:162px;line-height:1;white-space:nowrap"><span class="line">a Medida</span></h2>
+    <p class="abs silver" id="s4-sub" style="left:86px;top:716px;font-size:38px;font-weight:300;white-space:nowrap">Olvídate de la complejidad tecnológica.</p>
+
+    <div class="card" id="c1" style="top:812px">
+      <div class="ic"><svg viewBox="0 0 24 24"><path pathLength="1" d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg></div>
+      <div class="ttl"><span class="line">Creación Rápida</span></div>
+      <div class="dsc">Produce más sin esfuerzo</div>
+      <div class="num mono">01</div>
+      <div class="sweep"></div>
+    </div>
+    <div class="card" id="c2" style="top:1052px">
+      <div class="ic"><svg viewBox="0 0 24 24"><path pathLength="1" d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path pathLength="1" d="M20 3v4"/><path pathLength="1" d="M22 5h-4"/><path pathLength="1" d="M4 17v2"/><path pathLength="1" d="M5 18H3"/></svg></div>
+      <div class="ttl"><span class="line">Cero Fricción</span></div>
+      <div class="dsc">Toda la IA sin tecnicismos</div>
+      <div class="num mono">02</div>
+      <div class="sweep"></div>
+    </div>
+    <div class="card" id="c3" style="top:1292px">
+      <div class="ic"><svg viewBox="0 0 24 24"><polyline pathLength="1" points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline pathLength="1" points="16 7 22 7 22 13"/></svg></div>
+      <div class="ttl"><span class="line">Más Ventas</span></div>
+      <div class="dsc">Resultados puros de conversión</div>
+      <div class="num mono">03</div>
+      <div class="bars"><i style="height:34px"></i><i style="height:58px"></i><i style="height:90px"></i></div>
+      <div class="sweep"></div>
+    </div>
+
+    <div class="abs mono" id="s4-tick">
+      Producción de Alta Calidad<b>✦</b>Flujos Optimizados con IA<b>✦</b>Posicionamiento Inmediato<b>✦</b>Producción de Alta Calidad<b>✦</b>Flujos Optimizados con IA<b>✦</b>Posicionamiento Inmediato<b>✦</b>
+    </div>
+  </section>
+
+  <!-- ===== S5 · Proyectos ===== -->
+  <section class="scene" id="s5">
+    <div class="abs" id="s5-marq">ARCHIVO ARCHIVO ARCHIVO</div>
+    <div class="abs" id="s5-marq2" style="top:1640px;-webkit-text-stroke-color:rgba(255,255,255,.09)">ARCHIVO ARCHIVO ARCHIVO</div>
+    <div class="abs" style="left:86px;top:470px"><span class="mono kicker ib" id="s5-k">( 03 ) Proyectos Destacados</span></div>
+    <div class="abs" id="s5-card">
+      <div class="slide" id="sl1"><img src="../public/gallery-1.jpg" alt=""></div>
+      <div class="slide" id="sl2"><img src="../public/gallery-2.jpg" alt=""></div>
+      <div class="slide" id="sl3"><img src="../public/streetwear.jpg" alt=""></div>
+      <div class="slide" id="sl4"><canvas id="vid" width="1000" height="562"></canvas></div>
+      <div id="s5-edge"></div>
+    </div>
+    <div class="abs" id="s5-meta">
+      <div class="meta" id="m1"><div class="mono cat"><span class="line">Reescalado y Retoque AI</span></div><div class="tt"><span class="line">Campaña Moda</span></div></div>
+      <div class="meta" id="m2"><div class="mono cat"><span class="line">Social Media</span></div><div class="tt"><span class="line">Redes Sociales</span></div></div>
+      <div class="meta" id="m3"><div class="mono cat"><span class="line">Branding</span></div><div class="tt"><span class="line">Streetwear Brand</span></div></div>
+      <div class="meta" id="m4"><div class="mono cat"><span class="line">Video · IA Generativa</span></div><div class="tt"><span class="line">Edición Cinematográfica</span></div></div>
+      <div id="s5-count" class="mono"><span class="slot"><span class="reel" id="s5-reel"><span>01</span><span>02</span><span>03</span><span>04</span></span></span><span>&nbsp;/ 04</span></div>
+    </div>
+  </section>
+
+  <!-- ===== S6 · Metodología ===== -->
+  <section class="scene" id="s6">
+    <div class="abs" style="left:86px;top:330px"><span class="mono kicker ib" id="s6-k">( 04 ) Metodología</span></div>
+    <h2 class="abs" id="s6-h1" style="left:80px;top:384px;font-size:92px;font-weight:800;letter-spacing:-.045em;line-height:1.04;white-space:nowrap">
+      <span class="line">La Inteligencia</span>
+      <span class="line">Artificial no es</span>
+      <span class="line silver">el fin,</span>
+    </h2>
+    <h2 class="abs serif blue" id="s6-h2" style="left:84px;top:688px;font-size:184px;line-height:1;white-space:nowrap"><span class="line">es el medio.</span></h2>
+
+    <div class="abs" id="s6-line"></div>
+    <div class="node-ring" id="r1" style="top:1010px"></div>
+    <div class="node-ring" id="r2" style="top:1225px"></div>
+    <div class="node-ring" id="r3" style="top:1440px"></div>
+    <div class="node" id="n1" style="top:1010px"></div>
+    <div class="node" id="n2" style="top:1225px"></div>
+    <div class="node" id="n3" style="top:1440px"></div>
+    <div class="step" id="st1" style="top:952px"><div class="mono sn">Paso 01</div><div class="st"><span class="line">Análisis</span></div><div class="sd">Analizamos tu marca</div></div>
+    <div class="step" id="st2" style="top:1167px"><div class="mono sn">Paso 02</div><div class="st"><span class="line">Edición</span></div><div class="sd">Contenido visual de alto impacto</div></div>
+    <div class="step" id="st3" style="top:1382px"><div class="mono sn">Paso 03</div><div class="st"><span class="line">Expansión</span></div><div class="sd">Ventas reales, en menos tiempo</div></div>
+  </section>
+
+  <!-- ===== S7 · Contacto + cierre ===== -->
+  <section class="scene" id="s7">
+    <div class="abs" id="s7-panel">
+      <div class="abs mono" id="s7-pill"><span class="pd"><i id="ping"></i><i></i></span><span>Agenda Abierta</span></div>
+      <h2 class="abs outfit" id="s7-h" style="left:76px;top:268px;font-size:158px;font-weight:700;letter-spacing:-.05em;line-height:1;color:#fff;white-space:nowrap">Contáctanos</h2>
+      <div class="abs ct" id="s7-wa" style="left:84px;top:540px">
+        <div class="mono lb"><span class="ib" id="s7-wa-l">WhatsApp / Teléfono</span></div>
+        <div class="vl" style="font-size:74px"><span class="line">+54 9 3517714541</span></div>
+        <div class="ul" style="width:620px"></div>
+      </div>
+      <div class="abs ct" id="s7-em" style="left:84px;top:772px">
+        <div class="mono lb"><span class="ib" id="s7-em-l">Email Principal</span></div>
+        <div class="vl" style="font-size:52px"><span class="line">alonsoreyesleo178@gmail.com</span></div>
+        <div class="ul" style="width:780px"></div>
+      </div>
+      <p class="abs silver" id="s7-desc" style="left:84px;top:1000px;width:880px;font-size:38px;font-weight:300;line-height:1.42">Impulsando el crecimiento de tu empresa con herramientas digitales, IA y automatización.</p>
+      <div class="abs" id="s7-cta"><span>Iniciar Protocolo</span><svg viewBox="0 0 24 24" id="s7-arrow"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></div>
+    </div>
+
+    <div id="s7-end" class="layer">
+      <div id="e-dot" class="abs dot" style="left:540px;top:700px"></div>
+      <div id="e-ring" class="abs ring" style="left:540px;top:700px"></div>
+      <div class="row" style="top:770px"><span class="ib" id="e-word" style="font-size:236px;font-weight:800;letter-spacing:-.06em;line-height:1;color:#fff">NEXTRO</span></div>
+      <div id="e-line" class="abs" style="left:240px;top:1052px;width:600px;height:4px;border-radius:2px;background:var(--blue)"></div>
+      <div class="row" style="top:1090px"><span class="serif ib" id="e-tag" style="font-size:76px;color:rgba(250,250,250,.85)">Naturaleza es el Algoritmo</span></div>
+      <div class="row" style="top:1250px"><span class="mono ib" id="e-wa" style="font-size:28px;color:#fff">WhatsApp  +54 9 3517714541</span></div>
+      <div class="row" style="top:1310px"><span class="mono ib" id="e-c" style="font-size:20px;color:rgba(250,250,250,.4)">© 2026 Nextro Lab</span></div>
+    </div>
+  </section>
+
+  <!-- ===== HUD ===== -->
+  <div id="hud" class="layer">
+    <div class="corner c-tl"></div><div class="corner c-tr"></div><div class="corner c-bl"></div><div class="corner c-br"></div>
+    <div class="hud-t mono" style="left:112px;top:58px">Nextro Lab</div>
+    <div class="hud-t mono" id="hud-tc" style="right:112px;top:58px">TC 00:00:00</div>
+    <div class="hud-t mono" id="hud-sc" style="left:112px;bottom:82px">01 / 07 — La pregunta</div>
+    <div class="hud-t mono" style="right:112px;bottom:82px">ES · 2026</div>
+    <div id="hud-prog"><i id="hud-bar"></i></div>
+  </div>
+
+  <div id="vignette" class="layer"></div>
+  <canvas id="grain" width="540" height="960"></canvas>
+  <div id="fade" class="layer"></div>
+</div>
+
+<script src="../node_modules/gsap/dist/gsap.min.js"></script>
+<script>
+(() => {
+  const FPS = 30;
+  const DURATION = 34;
+  const VIDEO_FRAMES = 96;            // build/giant/f001.jpg … f096.jpg (see render.mjs)
+  const $ = (s) => document.querySelector(s);
+  const $$ = (s) => [...document.querySelectorAll(s)];
+
+  // ---------- audio cue sheet (read by render.mjs → audio.py) ----------
+  const cues = [];
+  const cue = (type, t, extra = {}) => cues.push({ type, t, ...extra });
+
+  // ---------- text helpers ----------
+  const wrap = (html) => `<span class="m"><span class="mi">${html}</span></span>`;
+  function maskEl(el) { el.innerHTML = wrap(el.innerHTML); return el.querySelector('.mi'); }
+  function maskLines(root) {
+    return [...root.querySelectorAll('.line')].map((l) => { l.innerHTML = wrap(l.innerHTML); return l.querySelector('.mi'); });
+  }
+  function maskWords(el) {
+    const words = el.textContent.trim().split(/\s+/);
+    el.innerHTML = words.map((w) => wrap(w)).join(' ');
+    return [...el.querySelectorAll('.mi')];
+  }
+  function maskChars(el) {
+    const chars = [...el.textContent.trim()];
+    el.innerHTML = chars.map((c) => (c === ' ' ? ' ' : wrap(c))).join('');
+    return [...el.querySelectorAll('.mi')];
+  }
+  function splitChars(el) {
+    const chars = [...el.textContent];
+    el.innerHTML = chars.map((c) => `<span class="ib">${c === ' ' ? '&nbsp;' : c}</span>`).join('');
+    return [...el.children];
+  }
+
+  const tl = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } });
+  const type = (sel, at, dur = 0.55) =>
+    tl.fromTo(sel, { clipPath: 'inset(0% 100% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: dur, ease: 'steps(14)' }, at);
+
+  // ---------- background ----------
+  tl.fromTo('#grid', { opacity: 0 }, { opacity: 1, duration: 1.4, ease: 'power1.inOut' }, 0);
+  tl.fromTo(['#glow', '#glow2'], { opacity: 0 }, { opacity: 1, duration: 2, ease: 'power1.inOut' }, 0);
+
+  // =====================================================================
+  // S1 · La pregunta (0 → 4)
+  // =====================================================================
+  tl.set('#s1', { autoAlpha: 1 }, 0);
+  tl.fromTo('#s1-dot', { scale: 0 }, { scale: 1, duration: 0.5, ease: 'back.out(3)' }, 0.12);
+  tl.fromTo('#s1-ring', { scale: 0.2, opacity: 0.9 }, { scale: 4.5, opacity: 0, immediateRender: false, duration: 1.1, ease: 'power2.out' }, 0.18);
+  tl.to('#s1-dot', { y: -470, duration: 0.7, ease: 'expo.inOut' }, 0.42);
+  cue('tick', 0.12);
+  type('#s1-k', 0.75);
+  const q1 = maskWords($('#s1-q1'));
+  tl.fromTo(q1, { yPercent: 130 }, { yPercent: 0, duration: 0.8, stagger: 0.045, ease: 'expo.out' }, 0.85);
+  const q2 = maskLines($('#s1-q2'));
+  q2.forEach((l, i) => {
+    tl.fromTo(l, { yPercent: 130, rotation: 5, transformOrigin: '0% 100%' }, { yPercent: 0, rotation: 0, duration: 1.0, ease: 'expo.out' }, 1.35 + i * 0.4);
+    cue('tick', 1.35 + i * 0.4, { gain: 0.6 });
+  });
+  tl.fromTo('#s1-txt', { scale: 1 }, { scale: 1.06, duration: 3.6, ease: 'none', transformOrigin: '50% 45%' }, 0.2);
+  // exit
+  tl.to(q1, { yPercent: -130, duration: 0.4, stagger: 0.015, ease: 'power3.in' }, 3.32);
+  tl.to(q2, { yPercent: -130, duration: 0.42, stagger: 0.05, ease: 'power3.in' }, 3.38);
+  tl.to(['#s1-k', '#s1-dot'], { opacity: 0, duration: 0.25 }, 3.4);
+  cue('riser', 2.6, { end: 4.0 });
+
+  // =====================================================================
+  // S2 · La respuesta (≈3.55 → 8)
+  // =====================================================================
+  tl.set('#s2', { autoAlpha: 1 }, 3.55);
+  tl.fromTo('#s2-panel', { scaleY: 0 }, { scaleY: 1, duration: 0.48, ease: 'expo.inOut' }, 3.55);
+  tl.set('#s1', { autoAlpha: 0 }, 4.05);
+  cue('whoosh', 3.55, { dur: 0.48 });
+  cue('impact', 4.0, { gain: 1 });
+  tl.fromTo('#s2-ia', { x: 140, opacity: 0 }, { x: -200, opacity: 1, duration: 4.3, ease: 'none' }, 3.7);
+  type('#s2-k', 4.0);
+  const a1 = maskWords($('#s2-a1'));
+  tl.fromTo(a1, { yPercent: 130 }, { yPercent: 0, duration: 0.7, stagger: 0.06, ease: 'expo.out' }, 4.08);
+  ['#w-como', '#w-usarla', '#w-para', '#w-ganar'].forEach((id, i) => {
+    const mi = maskEl($(id));
+    const at = 4.5 + i * 0.5;
+    tl.fromTo(mi, { yPercent: 165, scaleY: 1.35, transformOrigin: '50% 100%' }, { yPercent: 0, scaleY: 1, duration: 0.55, ease: 'expo.out' }, at - 0.06);
+    cue('hit', at, { gain: i === 3 ? 1 : 0.75 });
+  });
+  tl.to('#s2-big', { keyframes: [{ x: -16, duration: 0.035 }, { x: 13, duration: 0.035 }, { x: -7, duration: 0.035 }, { x: 0, duration: 0.05 }], ease: 'none' }, 6.0);
+  tl.fromTo('#s2-under', { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: 'expo.inOut' }, 6.22);
+  tl.fromTo('#s2-content', { scale: 1 }, { scale: 1.035, duration: 3.4, ease: 'none', transformOrigin: '0% 50%' }, 4.0);
+  // exit: content drops away, panel collapses into a dot
+  tl.to('#s2-content', { opacity: 0, duration: 0.3, ease: 'power2.in' }, 7.3);
+  tl.to('#s2-panel', { clipPath: 'circle(0.6% at 50% 50%)', duration: 0.55, ease: 'expo.inOut' }, 7.42);
+  cue('whoosh', 7.42, { dur: 0.55, rev: true });
+
+  // =====================================================================
+  // S3 · NEXTRO (≈7.95 → 12)
+  // =====================================================================
+  tl.set('#s3', { autoAlpha: 1 }, 7.95);
+  tl.set('#s2', { autoAlpha: 0 }, 8.0);
+  cue('impact', 8.0, { gain: 0.9 });
+  tl.fromTo('#s3-ring', { scale: 0.2, opacity: 1 }, { scale: 7, opacity: 0, immediateRender: false, duration: 1.2, ease: 'power2.out' }, 8.0);
+  tl.fromTo('#s3-dot', { scale: 1.6 }, { scale: 1, duration: 0.4, ease: 'back.out(3)' }, 8.0);
+  const yEs = splitChars($('#s3-y'));
+  tl.fromTo(yEs, { opacity: 0, y: 26, filter: 'blur(14px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.7, stagger: 0.035 }, 8.12);
+  tl.to('#s3-dot', { y: 152, duration: 0.4, ease: 'expo.inOut' }, 8.35);
+  const word = maskChars($('#s3-word'));
+  tl.fromTo(word, { yPercent: 130 }, { yPercent: 0, duration: 0.95, stagger: 0.055, ease: 'expo.out' }, 8.45);
+  tl.fromTo('#s3-line', { scaleX: 0 }, { scaleX: 1, duration: 0.75, ease: 'expo.inOut' }, 8.75);
+  tl.to('#s3-dot', { scale: 0, duration: 0.25, ease: 'power2.in' }, 8.8);
+  tl.fromTo('#s3-tag', { opacity: 0, letterSpacing: '.6em' }, { opacity: 1, letterSpacing: '.22em', duration: 1.1, ease: 'expo.out' }, 9.1);
+  cue('shimmer', 8.45, { dur: 1.4 });
+  // flip to light: the 3D logo opens out of the blue line
+  tl.to('#s3-light', { clipPath: 'inset(0% 0% 0% 0% round 0px)', duration: 0.7, ease: 'expo.inOut' }, 9.82);
+  tl.fromTo(['#s3-img', '#s3-blur'], { scale: 1.1 }, { scale: 1, duration: 2.2, ease: 'power2.out' }, 9.82);
+  cue('whoosh', 9.82, { dur: 0.7 });
+  tl.to('#s3-dark', { opacity: 0, duration: 0.3, ease: 'power1.in' }, 9.95);
+  cue('impact', 10.0, { gain: 0.75 });
+  tl.to('#hud', { color: 'rgba(10,10,10,.6)', duration: 0.3 }, 10.0);
+  const l2 = maskLines($('#s3-l2'));
+  tl.fromTo(l2, { yPercent: 130 }, { yPercent: 0, duration: 0.9, stagger: 0.13, ease: 'expo.out' }, 10.45);
+  type('#s3-l1', 10.7);
+  // exit: push up
+  tl.to('#s3', { y: -1920, duration: 0.55, ease: 'expo.inOut' }, 11.55);
+  tl.to('#hud', { color: 'rgba(250,250,250,.55)', duration: 0.3 }, 11.7);
+  tl.set('#s3', { autoAlpha: 0 }, 12.15);
+  cue('whoosh', 11.55, { dur: 0.55 });
+
+  // =====================================================================
+  // S4 · Servicios (≈11.55 → 18)
+  // =====================================================================
+  tl.set('#s4', { autoAlpha: 1 }, 11.55);
+  tl.fromTo('#s4', { y: 1920 }, { y: 0, duration: 0.55, ease: 'expo.inOut' }, 11.55);
+  cue('impact', 12.0, { gain: 0.6 });
+  type('#s4-k', 11.95);
+  const t1 = maskChars($('#s4-t1'));
+  tl.fromTo(t1, { yPercent: 130 }, { yPercent: 0, duration: 0.85, stagger: 0.03, ease: 'expo.out' }, 12.0);
+  const t2 = maskLines($('#s4-t2'));
+  tl.fromTo(t2, { yPercent: 130, x: -40 }, { yPercent: 0, x: 0, duration: 0.9, ease: 'expo.out' }, 12.3);
+  const sub = maskWords($('#s4-sub'));
+  tl.fromTo(sub, { yPercent: 130 }, { yPercent: 0, duration: 0.7, stagger: 0.04, ease: 'expo.out' }, 12.6);
+  ['#c1', '#c2', '#c3'].forEach((id, i) => {
+    const at = 13.0 + i * 0.5;
+    const card = $(id);
+    tl.fromTo(card, { x: 1150, rotation: 5 }, { x: 0, rotation: 0, duration: 0.85, ease: 'expo.out' }, at - 0.12);
+    tl.to(card.querySelectorAll('svg *'), { strokeDashoffset: 0, duration: 0.8, stagger: 0.06, ease: 'power2.inOut' }, at + 0.15);
+    tl.fromTo(maskLines(card.querySelector('.ttl')), { yPercent: 130 }, { yPercent: 0, duration: 0.7, ease: 'expo.out' }, at + 0.08);
+    tl.fromTo(card.querySelector('.dsc'), { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.6 }, at + 0.22);
+    tl.fromTo(card.querySelector('.num'), { opacity: 0 }, { opacity: 1, duration: 0.4 }, at + 0.3);
+    cue('whoosh', at - 0.12, { dur: 0.3, gain: 0.35 });
+    cue('hit', at, { gain: 0.45 });
+    // activation pulse on the beat
+    const on = 15.0 + i * 0.5;
+    tl.to(card, { borderColor: 'rgba(59,130,246,.9)', backgroundColor: 'rgba(59,130,246,.10)', duration: 0.15, ease: 'power1.out' }, on);
+    tl.to(card.querySelector('.ic'), { backgroundColor: '#3B82F6', color: '#ffffff', scale: 1.08, duration: 0.15, ease: 'power1.out' }, on);
+    tl.to(card, { borderColor: 'rgba(255,255,255,.09)', backgroundColor: 'rgba(14,14,16,1)', duration: 0.5, ease: 'power2.out' }, on + 0.45);
+    tl.to(card.querySelector('.ic'), { backgroundColor: 'rgba(59,130,246,.12)', color: '#3B82F6', scale: 1, duration: 0.5, ease: 'power2.out' }, on + 0.45);
+    tl.fromTo(card.querySelector('.sweep'), { x: -400 }, { x: 1300, duration: 0.8, ease: 'power2.inOut' }, 16.5 + i * 0.1);
+    cue('tick', on, { gain: 0.5 });
+  });
+  tl.fromTo('#c3 .bars i', { scaleY: 0 }, { scaleY: 1, duration: 0.6, stagger: 0.09, ease: 'back.out(2)' }, 14.45);
+  tl.fromTo('#s4-tick', { x: 0, opacity: 0 }, { x: -1350, opacity: 1, duration: 6.4, ease: 'none' }, 11.6);
+  cue('shimmer', 16.5, { dur: 0.9, gain: 0.5 });
+  // exit
+  tl.to(['#c1', '#c2', '#c3'], { x: -1150, duration: 0.5, stagger: 0.05, ease: 'power3.in' }, 17.42);
+  tl.to([...t1], { yPercent: -130, duration: 0.4, stagger: 0.012, ease: 'power3.in' }, 17.42);
+  tl.to([...t2, ...sub, '#s4-k', '#s4-tick'], { opacity: 0, duration: 0.3 }, 17.5);
+  tl.set('#s4', { autoAlpha: 0 }, 18.0);
+  cue('whoosh', 17.42, { dur: 0.5 });
+
+  // =====================================================================
+  // S5 · Proyectos (≈17.85 → 24)
+  // =====================================================================
+  tl.set('#s5', { autoAlpha: 1 }, 17.85);
+  cue('impact', 18.0, { gain: 0.7 });
+  tl.fromTo('#s5-marq', { x: 60 }, { x: -1500, duration: 6.2, ease: 'none' }, 17.85);
+  tl.fromTo('#s5-marq2', { x: -2300 }, { x: -700, duration: 6.2, ease: 'none' }, 17.85);
+  tl.fromTo(['#s5-marq', '#s5-marq2'], { opacity: 0 }, { opacity: 1, duration: 0.6, ease: 'power1.out' }, 17.85);
+  type('#s5-k', 18.0, 0.7);
+  tl.to('#s5-card', { clipPath: 'inset(0% 0% 0% 0% round 48px)', duration: 0.6, ease: 'expo.inOut' }, 17.85);
+  tl.fromTo('#sl1 img', { scale: 1.4 }, { scale: 1, duration: 1.6, ease: 'expo.out' }, 17.9);
+  const metas = ['#m1', '#m2', '#m3', '#m4'].map((id) => maskLines($(id)));
+  tl.fromTo(metas[0], { yPercent: 130 }, { yPercent: 0, duration: 0.7, stagger: 0.08, ease: 'expo.out' }, 18.3);
+  tl.fromTo('#s5-count', { opacity: 0 }, { opacity: 1, duration: 0.4 }, 18.4);
+  // swaps on the beat: 19.5 / 20.5 / 21.5
+  [19.5, 20.5, 21.5].forEach((beat, i) => {
+    const next = `#sl${i + 2}`;
+    const prev = `#sl${i + 1}`;
+    const at = beat - 0.3;
+    tl.to(next, { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.55, ease: 'expo.inOut' }, at);
+    tl.fromTo(`${next} ${i === 2 ? 'canvas' : 'img'}`, { scale: 1.35 }, { scale: 1, duration: 1.1, ease: 'expo.out' }, at);
+    tl.to(`${prev} img`, { scale: 1.12, duration: 0.55, ease: 'power2.in' }, at);
+    tl.to(metas[i], { yPercent: -130, duration: 0.35, stagger: 0.04, ease: 'power3.in' }, at - 0.05);
+    tl.fromTo(metas[i + 1], { yPercent: 130 }, { yPercent: 0, duration: 0.7, stagger: 0.08, ease: 'expo.out' }, beat - 0.05);
+    tl.to('#s5-reel', { yPercent: -25 * (i + 1), duration: 0.45, ease: 'expo.inOut' }, at + 0.1);
+    cue('whoosh', at, { dur: 0.55, gain: 0.55 });
+    cue('hit', beat, { gain: 0.55 });
+  });
+  // the card morphs from portrait to cinema for the video piece
+  tl.to('#s5-card', { left: 40, top: 700, width: 1000, height: 562, duration: 0.8, ease: 'expo.inOut' }, 21.2);
+  tl.to('#s5-meta', { top: 1322, duration: 0.8, ease: 'expo.inOut' }, 21.2);
+  tl.to('#s5-k', { y: 170, duration: 0.8, ease: 'expo.inOut' }, 21.2);
+  // exit: collapse to a line
+  tl.to('#s5-card', { clipPath: 'inset(50% 0% 50% 0% round 48px)', duration: 0.45, ease: 'expo.in' }, 23.5);
+  tl.to([...metas[3], '#s5-count', '#s5-k', '#s5-marq', '#s5-marq2'], { opacity: 0, duration: 0.3 }, 23.55);
+  tl.set('#s5', { autoAlpha: 0 }, 24.05);
+  cue('whoosh', 23.5, { dur: 0.45, rev: true });
+  const VIDEO_IN = 21.2, VIDEO_OUT = 24.0;
+
+  // =====================================================================
+  // S6 · Metodología (≈23.95 → 28)
+  // =====================================================================
+  tl.set('#s6', { autoAlpha: 1 }, 23.95);
+  cue('impact', 24.0, { gain: 0.6 });
+  type('#s6-k', 24.0);
+  const h1 = maskLines($('#s6-h1'));
+  tl.fromTo(h1, { yPercent: 130 }, { yPercent: 0, duration: 0.9, stagger: 0.14, ease: 'expo.out' }, 24.05);
+  const h2 = maskLines($('#s6-h2'));
+  tl.fromTo(h2, { yPercent: 130, x: -30 }, { yPercent: 0, x: 0, duration: 1.0, ease: 'expo.out' }, 24.5);
+  tl.fromTo('#s6-line', { scaleY: 0 }, { scaleY: 1, duration: 1.4, ease: 'power2.inOut' }, 24.95);
+  [1, 2, 3].forEach((n, i) => {
+    const at = 25.0 + i * 0.5;
+    tl.fromTo(`#n${n}`, { scale: 0 }, { scale: 1, duration: 0.45, ease: 'back.out(3)' }, at);
+    tl.to(`#n${n}`, { backgroundColor: '#3B82F6', boxShadow: '0 0 40px rgba(59,130,246,.85)', duration: 0.2 }, at + 0.1);
+    tl.fromTo(`#r${n}`, { scale: 0.6, opacity: 1 }, { scale: 3.2, opacity: 0, immediateRender: false, duration: 0.9, ease: 'power2.out' }, at + 0.05);
+    tl.fromTo(`#st${n} .sn`, { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.5 }, at + 0.02);
+    tl.fromTo(maskLines($(`#st${n} .st`)), { yPercent: 130 }, { yPercent: 0, duration: 0.75, ease: 'expo.out' }, at + 0.06);
+    tl.fromTo(`#st${n} .sd`, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.6 }, at + 0.2);
+    cue('hit', at, { gain: 0.5 });
+  });
+  // exit
+  tl.to(['#s6-k', ...h1, ...h2, '#s6-line', '.node', '.step'], { opacity: 0, y: -50, duration: 0.4, stagger: 0.02, ease: 'power2.in' }, 27.4);
+  tl.set('#s6', { autoAlpha: 0 }, 28.0);
+  cue('whoosh', 27.5, { dur: 0.45 });
+
+  // =====================================================================
+  // S7 · Contacto (≈27.85 → 31.5) + cierre (31.5 → 34)
+  // =====================================================================
+  tl.set('#s7', { autoAlpha: 1 }, 27.85);
+  tl.fromTo('#s7-panel', { y: 1800 }, { y: 0, duration: 0.75, ease: 'expo.out' }, 27.85);
+  cue('impact', 28.0, { gain: 0.65 });
+  tl.fromTo('#s7-pill', { opacity: 0, scale: 0.85, transformOrigin: '0% 50%' }, { opacity: 1, scale: 1, duration: 0.6, ease: 'back.out(2)' }, 28.2);
+  const hc = maskChars($('#s7-h'));
+  tl.fromTo(hc, { yPercent: 130 }, { yPercent: 0, duration: 0.85, stagger: 0.03, ease: 'expo.out' }, 28.3);
+  [['#s7-wa', 28.75], ['#s7-em', 29.05]].forEach(([id, at]) => {
+    type(`${id}-l`, at, 0.5);
+    tl.fromTo(maskLines($(`${id} .vl`)), { yPercent: 130 }, { yPercent: 0, duration: 0.8, ease: 'expo.out' }, at + 0.12);
+    tl.fromTo(`${id} .ul`, { scaleX: 0 }, { scaleX: 1, duration: 0.8, ease: 'expo.inOut' }, at + 0.35);
+    cue('tick', at + 0.12, { gain: 0.5 });
+  });
+  const dw = maskWords($('#s7-desc'));
+  tl.fromTo(dw, { yPercent: 130 }, { yPercent: 0, duration: 0.7, stagger: 0.025, ease: 'expo.out' }, 29.45);
+  tl.fromTo('#s7-cta', { opacity: 0, scale: 0.7, transformOrigin: '0% 50%' }, { opacity: 1, scale: 1, duration: 0.6, ease: 'back.out(2.2)' }, 29.85);
+  tl.to('#s7-arrow', { keyframes: [{ x: 12, duration: 0.25, ease: 'power2.out' }, { x: 0, duration: 0.25, ease: 'power2.in' }, { x: 12, duration: 0.25, ease: 'power2.out' }, { x: 0, duration: 0.25, ease: 'power2.in' }] }, 30.35);
+  cue('hit', 29.9, { gain: 0.5 });
+  // to end card
+  tl.to('#s7-end', { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.6, ease: 'expo.inOut' }, 31.0);
+  tl.to('#s7-panel', { y: -300, duration: 0.6, ease: 'expo.inOut' }, 31.0);
+  cue('riser', 30.3, { end: 31.5, gain: 0.7 });
+  cue('whoosh', 31.0, { dur: 0.6 });
+  cue('final', 31.5);
+  tl.fromTo('#e-dot', { scale: 0 }, { scale: 1, duration: 0.5, ease: 'back.out(3)' }, 31.45);
+  tl.fromTo('#e-ring', { scale: 0.2, opacity: 1 }, { scale: 7, opacity: 0, immediateRender: false, duration: 1.3, ease: 'power2.out' }, 31.5);
+  const ew = maskChars($('#e-word'));
+  tl.fromTo(ew, { yPercent: 130 }, { yPercent: 0, duration: 1.0, stagger: 0.055, ease: 'expo.out' }, 31.55);
+  tl.fromTo('#e-line', { scaleX: 0 }, { scaleX: 1, duration: 0.8, ease: 'expo.inOut' }, 31.9);
+  const et = splitChars($('#e-tag'));
+  tl.fromTo(et, { opacity: 0, y: 20, filter: 'blur(10px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.7, stagger: 0.018 }, 32.1);
+  type('#e-wa', 32.5, 0.6);
+  tl.fromTo('#e-c', { opacity: 0 }, { opacity: 1, duration: 0.6 }, 32.8);
+  tl.fromTo('#s7-end', { scale: 1 }, { scale: 1.03, duration: 2.5, ease: 'none', transformOrigin: '50% 45%' }, 31.5);
+  tl.to('#fade', { opacity: 1, duration: 0.45, ease: 'power1.in' }, DURATION - 0.45);
+
+  // =====================================================================
+  // procedural layers (driven by absolute time → deterministic)
+  // =====================================================================
+  const SCENES = [
+    [0, 'La pregunta'], [4, 'La respuesta'], [8, 'Nextro'], [12, 'Servicios'],
+    [18, 'Proyectos'], [24, 'Metodología'], [28, 'Contacto'],
+  ];
+  const hudTc = $('#hud-tc'), hudSc = $('#hud-sc'), hudBar = $('#hud-bar');
+  const glow = $('#glow'), glow2 = $('#glow2'), grid = $('#grid'), ping = $('#ping');
+
+  // seeded grain
+  const grain = $('#grain'), gctx = grain.getContext('2d');
+  const noise = [];
+  let seed = 1337;
+  const rnd = () => { seed |= 0; seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  for (let k = 0; k < 8; k++) {
+    const img = gctx.createImageData(540, 960);
+    for (let p = 0; p < img.data.length; p += 4) { const v = (rnd() * 255) | 0; img.data[p] = img.data[p + 1] = img.data[p + 2] = v; img.data[p + 3] = 255; }
+    noise.push(img);
+  }
+
+  // video frames for the projects scene
+  const vid = $('#vid'), vctx = vid.getContext('2d');
+  const frames = [];
+  const loadFrames = Promise.all(Array.from({ length: VIDEO_FRAMES }, (_, i) => new Promise((res) => {
+    const im = new Image();
+    im.onload = () => im.decode().then(() => res(im), () => res(im));
+    im.onerror = () => res(null);
+    im.src = `build/giant/f${String(i + 1).padStart(3, '0')}.jpg`;
+    frames[i] = im;
+  })));
+  let lastVideoFrame = -1;
+
+  function procedural(t) {
+    const f = Math.round(t * FPS);
+    const s = Math.floor(t), ff = f % FPS;
+    hudTc.textContent = `TC 00:${String(s).padStart(2, '0')}:${String(ff).padStart(2, '0')}`;
+    let si = 0; SCENES.forEach(([st], i) => { if (t >= st) si = i; });
+    hudSc.textContent = `${String(si + 1).padStart(2, '0')} / 07 — ${SCENES[si][1]}`;
+    hudBar.style.transform = `scaleX(${Math.min(1, t / DURATION)})`;
+    glow.style.transform = `translate(${Math.sin(t * 0.35) * 180}px, ${Math.cos(t * 0.27) * 260}px)`;
+    glow2.style.transform = `translate(${Math.cos(t * 0.22) * 220}px, ${Math.sin(t * 0.31) * 200}px)`;
+    grid.style.backgroundPosition = `0px ${(t * 14) % 120}px`;
+    gctx.putImageData(noise[Math.floor(f / 2) % noise.length], 0, 0);   // grain at 15 fps, like film
+    // "Agenda Abierta" ping (1s period)
+    const p = (t % 1);
+    ping.style.transform = `scale(${1 + p * 1.6})`;
+    ping.style.opacity = String(0.75 * (1 - p));
+    // video
+    if (t >= VIDEO_IN - 0.4 && t <= VIDEO_OUT + 0.1) {
+      const k = Math.min(VIDEO_FRAMES - 1, Math.max(0, Math.floor(((t - VIDEO_IN) / (VIDEO_OUT - VIDEO_IN)) * VIDEO_FRAMES)));
+      if (k !== lastVideoFrame && frames[k] && frames[k].complete) { vctx.drawImage(frames[k], 0, 0, 1000, 562); lastVideoFrame = k; }
+    } else if (lastVideoFrame === -1 && frames[0] && frames[0].complete) {
+      vctx.drawImage(frames[0], 0, 0, 1000, 562); lastVideoFrame = 0;
+    }
+  }
+
+  window.__cues = cues;
+  window.__meta = { fps: FPS, duration: DURATION, width: 1080, height: 1920 };
+  window.__seek = (t) => { tl.seek(t, true); procedural(t); };
+  window.__ready = Promise.all([
+    document.fonts.ready,
+    loadFrames,
+    ...[...document.images].map((im) => (im.complete ? im.decode().catch(() => {}) : new Promise((r) => { im.onload = () => im.decode().then(r, r); im.onerror = r; }))),
+  ]).then(() => { window.__seek(0); return true; });
+
+  // live preview when opened in a normal browser (no ?render)
+  if (!new URLSearchParams(location.search).has('render')) {
+    const fit = () => {
+      const k = Math.min(innerWidth / 1080, innerHeight / 1920);
+      document.body.style.cssText = `width:${innerWidth}px;height:${innerHeight}px;background:#000`;
+      document.documentElement.style.cssText = `width:${innerWidth}px;height:${innerHeight}px`;
+      $('#stage').style.transform = `translate(${(innerWidth - 1080 * k) / 2}px, ${(innerHeight - 1920 * k) / 2}px) scale(${k})`;
+    };
+    addEventListener('resize', fit); fit();
+    window.__ready.then(() => {
+      const t0 = performance.now();
+      const loop = (now) => { window.__seek(((now - t0) / 1000) % DURATION); requestAnimationFrame(loop); };
+      requestAnimationFrame(loop);
+    });
+  }
+})();
+</script>
+</body>
+</html>
