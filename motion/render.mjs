@@ -4,6 +4,7 @@
 //   node motion/render.mjs                    # full video → motion/out/nextro-motion.mp4
 //   node motion/render.mjs --stills 1.5,9,22  # single PNG frames → motion/build/stills/
 //   node motion/render.mjs --from 8 --to 12   # partial render (preview)
+//   node motion/render.mjs --reuse-frames     # keep build/frames, redo audio + encode only
 //
 // Requires: ffmpeg, python3 (numpy + scipy) and Playwright with Chromium.
 import { createRequire } from 'node:module';
@@ -39,13 +40,15 @@ function run(cmd, argv, opts = {}) {
   if (r.status !== 0) throw new Error(`${cmd} exited with ${r.status}`);
 }
 
-// 1 · video frames for the projects scene (center crop hides the source watermark)
+// 1 · video frames for the projects scene: 84 native 24 fps frames from 3.5 s, shown one per output frame.
+//     The crop removes the source's letterbox bars and the watermark in the corner.
 function extractVideoFrames() {
   const dir = join(BUILD, 'giant');
-  if (existsSync(join(dir, 'f096.jpg'))) return;
+  if (existsSync(join(dir, 'f084.jpg')) && !existsSync(join(dir, 'f085.jpg'))) return;
+  rmSync(dir, { recursive: true, force: true });
   mkdirSync(dir, { recursive: true });
-  run('ffmpeg', ['-v', 'error', '-y', '-ss', '3.5', '-t', '4', '-i', join(ROOT, 'public', 'Gigante_de_Flores_Observa_Modelo (1).mp4'),
-    '-vf', 'crop=iw*0.9:ih*0.9,scale=1000:562:flags=lanczos', '-q:v', '2', '-frames:v', '96', join(dir, 'f%03d.jpg')]);
+  run('ffmpeg', ['-v', 'error', '-y', '-ss', '3.5', '-i', join(ROOT, 'public', 'Gigante_de_Flores_Observa_Modelo (1).mp4'),
+    '-vf', 'crop=1108:624:86:48,scale=1000:562:flags=lanczos', '-q:v', '2', '-frames:v', '84', join(dir, 'f%03d.jpg')]);
 }
 
 // 2 · static server rooted at the repo (the page loads ../public and ../node_modules)
@@ -99,22 +102,27 @@ async function main() {
     const to = Math.min(Number(args.to || meta.duration), meta.duration);
     const total = Math.round((to - from) * fps);
     const framesDir = join(BUILD, 'frames');
-    rmSync(framesDir, { recursive: true, force: true });
-    mkdirSync(framesDir, { recursive: true });
+    const reuse = args['reuse-frames'] && existsSync(join(framesDir, `f${String(total - 1).padStart(5, '0')}.jpg`));
+    if (!reuse) {
+      rmSync(framesDir, { recursive: true, force: true });
+      mkdirSync(framesDir, { recursive: true });
+    }
 
     // contiguous chunks per worker so every page only ever seeks forward
-    const workers = Math.max(1, Math.min(Number(args.workers || Math.max(1, cpus().length - 1)), 6));
-    const pages = [probe, ...(await Promise.all(Array.from({ length: workers - 1 }, openPage)))];
-    const per = Math.ceil(total / workers);
-    let done = 0;
-    const started = Date.now();
-    await Promise.all(pages.map(async (page, w) => {
-      for (let i = w * per; i < Math.min(total, (w + 1) * per); i++) {
-        await page.evaluate((x) => window.__seek(x), from + i / fps);
-        await page.screenshot({ path: join(framesDir, `f${String(i).padStart(5, '0')}.jpg`), type: 'jpeg', quality: 95 });
-        if (++done % 60 === 0) console.log(`  ${done}/${total} frames · ${((Date.now() - started) / 1000).toFixed(0)}s`);
-      }
-    }));
+    if (!reuse) {
+      const workers = Math.max(1, Math.min(Number(args.workers || Math.max(1, cpus().length - 1)), 6));
+      const pages = [probe, ...(await Promise.all(Array.from({ length: workers - 1 }, openPage)))];
+      const per = Math.ceil(total / workers);
+      let done = 0;
+      const started = Date.now();
+      await Promise.all(pages.map(async (page, w) => {
+        for (let i = w * per; i < Math.min(total, (w + 1) * per); i++) {
+          await page.evaluate((x) => window.__seek(x), from + i / fps);
+          await page.screenshot({ path: join(framesDir, `f${String(i).padStart(5, '0')}.jpg`), type: 'jpeg', quality: 95 });
+          if (++done % 60 === 0) console.log(`  ${done}/${total} frames · ${((Date.now() - started) / 1000).toFixed(0)}s`);
+        }
+      }));
+    }
 
     // 3 · soundtrack generated from the cue sheet
     writeFileSync(join(BUILD, 'cues.json'), JSON.stringify({ duration: meta.duration, bpm: 120, cues }, null, 2));
@@ -123,15 +131,24 @@ async function main() {
 
     // 4 · encode (H.264 high profile + AAC, phone/Instagram/TikTok friendly)
     mkdirSync(OUT, { recursive: true });
-    const outFile = resolve(args.out || join(OUT, from === 0 && to === meta.duration ? 'nextro-motion.mp4' : `preview-${from}-${to}.mp4`));
-    run('ffmpeg', ['-v', 'error', '-y',
-      '-framerate', String(fps), '-i', join(framesDir, 'f%05d.jpg'),
-      '-ss', String(from), '-t', String(to - from), '-i', wav,
-      '-c:v', 'libx264', '-preset', 'slow', '-crf', '18', '-maxrate', '12M', '-bufsize', '24M', '-profile:v', 'high', '-level', '4.2', '-pix_fmt', 'yuv420p',
-      '-color_primaries', 'bt709', '-color_trc', 'bt709', '-colorspace', 'bt709',
-      '-c:a', 'aac', '-b:a', '192k', '-ar', '48000',
-      '-movflags', '+faststart', '-shortest', outFile]);
-    console.log(`✓ ${outFile}`);
+    const full = from === 0 && to === meta.duration;
+    const encode = (file, rate, audioRate) => {
+      run('ffmpeg', ['-v', 'error', '-y',
+        '-framerate', String(fps), '-i', join(framesDir, 'f%05d.jpg'),
+        '-ss', String(from), '-t', String(to - from), '-i', wav,
+        // screenshots are full-range BT.601 JPEGs → convert to the BT.709 TV range the file is tagged with
+        '-vf', 'scale=in_color_matrix=bt601:in_range=full:out_color_matrix=bt709:out_range=tv:flags=accurate_rnd+full_chroma_int',
+        '-c:v', 'libx264', '-preset', 'slow', '-crf', rate.crf, '-maxrate', rate.max, '-bufsize', rate.buf,
+        '-profile:v', 'high', '-level', '4.2', '-pix_fmt', 'yuv420p',
+        '-color_primaries', 'bt709', '-color_trc', 'bt709', '-colorspace', 'bt709', '-color_range', 'tv',
+        '-c:a', 'aac', '-b:a', audioRate, '-ar', '48000',
+        '-movflags', '+faststart', '-shortest', file]);
+      console.log(`✓ ${file}`);
+    };
+    // master for Instagram / TikTok uploads
+    encode(resolve(args.out || join(OUT, full ? 'nextro-motion.mp4' : `preview-${from}-${to}.mp4`)), { crf: '18', max: '12M', buf: '24M' }, '192k');
+    // light copy (< 25 MB) for WhatsApp, email and phones
+    if (full && !args.out) encode(join(OUT, 'nextro-motion-movil.mp4'), { crf: '21', max: '5.5M', buf: '11M' }, '160k');
   } finally {
     await browser.close();
     server.close();

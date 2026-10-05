@@ -60,7 +60,10 @@ class Bus:
             return
         if i < 0:
             sig, i = sig[-i:], 0
-        sig = sig[: len(self.L) - i]
+        sig = sig[: len(self.L) - i].copy()
+        tail, head = min(240, len(sig)), min(48, len(sig))   # 5 ms tail / 1 ms head: no clicks
+        sig[-tail:] *= np.linspace(1, 0, tail)
+        sig[:head] *= np.linspace(0, 1, head)
         l, r = np.cos((pan + 1) * np.pi / 4), np.sin((pan + 1) * np.pi / 4)
         self.L[i:i + len(sig)] += sig * gain * l * 1.414
         self.R[i:i + len(sig)] += sig * gain * r * 1.414
@@ -72,10 +75,11 @@ class Bus:
 # ---------------------------------------------------------------- instruments
 def kick():
     t = t_axis(0.5)
-    f = 46 + 120 * np.exp(-t / 0.032)
-    body = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t / 0.30)
+    f = 55 + 140 * np.exp(-t / 0.03)
+    body = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t / 0.13)
+    knock = np.sin(2 * np.pi * 180 * t) * np.exp(-t / 0.035) * 0.45   # audible on phone speakers
     click = filt(rng.standard_normal(len(t)), 'highpass', 2500) * np.exp(-t / 0.003) * 0.35
-    return np.tanh(1.6 * (body + click))
+    return np.tanh(1.6 * (body + knock + click))
 
 
 def clap():
@@ -110,33 +114,40 @@ def hit():
 
 def impact(length=2.4):
     t = t_axis(length)
-    f = 38 + 90 * np.exp(-t / 0.08)
+    f = 48 + 90 * np.exp(-t / 0.08)
     boom = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t / 0.9)
+    body = (filt(rng.standard_normal(len(t)), 'bandpass', [150, 400]) * 0.8
+            + np.sin(2 * np.pi * 110 * t) * 0.5) * np.exp(-t / 0.28)
+    boom = boom + body
     noise = filt(rng.standard_normal(len(t)), 'lowpass', 1800) * np.exp(-t / 0.25) * 0.5
     crack = filt(rng.standard_normal(len(t)), 'highpass', 3000) * np.exp(-t / 0.03) * 0.3
     return np.tanh(1.3 * (boom + noise + crack))
 
 
 def sweep_noise(dur, f0, f1, shape):
-    """Band-limited noise whose band slides from f0 to f1 (block-wise filtering)."""
+    """Band-limited noise whose band slides from f0 to f1.
+
+    The noise is filtered in short blocks; neighbouring blocks overlap by 2·pad samples with
+    complementary linear ramps, so the weights always sum to 1 (no flutter at block rate)."""
     n = int(dur * SR)
-    x = rng.standard_normal(n)
+    x = rng.standard_normal(n + SR)          # extra head-room so every block has filter run-in
     out = np.zeros(n)
     blocks = 24
     edges = np.linspace(0, n, blocks + 1).astype(int)
-    win_pad = int(0.01 * SR)
+    pad = max(1, min(int(0.01 * SR), (edges[1] - edges[0]) // 3))
+    run_in = int(0.02 * SR)
     for b in range(blocks):
         a, z = edges[b], edges[b + 1]
         fc = f0 * (f1 / f0) ** ((a + z) / 2 / n)
         lo, hi = max(40, fc * 0.6), min(SR / 2 - 100, fc * 1.6)
-        seg_a, seg_z = max(0, a - win_pad), min(n, z + win_pad)
-        y = filt(x[seg_a:seg_z], 'bandpass', [lo, hi])
+        seg_a, seg_z = max(0, a - pad), min(n, z + pad)
+        src_a = seg_a + SR // 2               # read from the padded noise, with a filter run-in
+        y = filt(x[src_a - run_in: src_a + (seg_z - seg_a)], 'bandpass', [lo, hi])[run_in:]
         w = np.ones(seg_z - seg_a)
-        ramp = np.linspace(0, 1, win_pad)
-        if seg_a < a:
-            w[:win_pad] = ramp
-        if seg_z > z:
-            w[-win_pad:] = ramp[::-1]
+        if b > 0:
+            w[: 2 * pad] = np.linspace(0, 1, 2 * pad)
+        if b < blocks - 1:
+            w[-2 * pad:] = np.linspace(1, 0, 2 * pad)
         out[seg_a:seg_z] += y * w
     return out * shape
 
@@ -146,7 +157,11 @@ def whoosh(dur, rev=False):
     t = t_axis(dur)
     p = t / dur
     if rev:   # swells into the cut
-        shape = p ** 2.2 * (p < 0.97)
+        cut = int(0.97 * len(p))
+        fade = np.ones(len(p))
+        fade[cut - 192:cut] = np.linspace(1, 0, 192)   # 4 ms release instead of a hard gate
+        fade[cut:] = 0
+        shape = p ** 2.2 * fade
         sig = sweep_noise(dur, 300, 7000, shape)
     else:     # passes by: rises then falls
         shape = np.sin(np.pi * np.clip(p, 0, 1)) ** 1.6
@@ -186,6 +201,7 @@ def pad_chord(freqs, dur, cutoff):
 def bass_note(freq, dur):
     t = t_axis(dur)
     s = np.sin(2 * np.pi * freq * t) + 0.35 * filt(saw(freq, t), 'lowpass', 380)
+    s = np.tanh(2.5 * s) / np.tanh(2.5) + 0.4 * np.sin(2 * np.pi * 2 * freq * t)   # harmonics a phone can play
     return s * env_adsr(len(t), a=0.004, d=0.08, s=0.65, r=0.05)
 
 
@@ -222,7 +238,7 @@ def main(cue_path, out_path):
     HATS = [(0.0, 31.0)]
     CLAP = [(4.0, 8.0), (10.0, 31.0)]
     BASS = [(4.0, 8.0), (10.0, 31.25)]
-    ARP = [(8.0, 12.0), (24.0, 28.0)]
+    ARP = [(8.0, 12.0), (14.0, 31.0)]
 
     k, c, ho, hc = kick(), clap(), hat(True), hat(False)
     kick_times = []
@@ -234,15 +250,15 @@ def main(cue_path, out_path):
         t = s * BEAT / 4
         pos = s % 16
         if in_ranges(t, KICK) and pos % 4 == 0:
-            dry.add(k, t, 0.95)
+            dry.add(k, t, 0.75)
             kick_times.append(t)
         if in_ranges(t, CLAP) and pos in (4, 12):
-            dry.add(c, t, 0.45, pan=0.05)
-            verb.add(c, t, 0.25)
+            dry.add(c, t, 0.62, pan=0.05)
+            verb.add(c, t, 0.3)
         if in_ranges(t, HATS):
             intro = t < 4.0
             if pos % 4 == 2:
-                dry.add(ho if (pos == 14 and not intro) else hc, t, 0.22 if intro else 0.28, pan=0.25)
+                dry.add(ho if (pos == 14 and not intro) else hc, t, 0.22 if intro else 0.36, pan=0.25)
             elif not intro or pos % 2 == 0:
                 dry.add(hc, t, 0.06 if intro else 0.1, pan=-0.2)
 
@@ -251,8 +267,8 @@ def main(cue_path, out_path):
         chord, root, arp = CHORDS[b % 4]
         if t0 >= 31.5:
             break
-        cutoff = 900 if t0 < 4 else 1300 if t0 < 10 else 1900
-        lift = 2.4 if t0 < 4 else 1.7 if 8 <= t0 < 10 else 1.0   # intro + break carry the energy without drums
+        cutoff = 900 if t0 < 4 else 1700 if t0 < 10 else 2600
+        lift = 1.9 if t0 < 4 else 1.7 if 8 <= t0 < 10 else 1.35   # intro + break carry the energy without drums
         pads.add(pad_chord([note(n) for n in chord], BAR + 0.6, cutoff), t0, 0.32 * lift, pan=0.0)
         pads.add(pad_chord([note(n + 12) for n in chord[:2]], BAR + 0.6, cutoff * 1.4), t0, 0.08 * lift, pan=0.4)
         if t0 < 4 or 8 <= t0 < 10:
@@ -260,12 +276,12 @@ def main(cue_path, out_path):
         for e in range(8):
             te = t0 + e * BEAT / 2
             if in_ranges(te, BASS):
-                bass.add(bass_note(note(root + (12 if e % 2 else 0)), BEAT / 2 * 0.92), te, 0.42)
+                bass.add(bass_note(note(root + (12 if e % 2 else 0)), BEAT / 2 * 0.92), te, 0.3)
         for s in range(16):
             ts = t0 + s * BEAT / 4
             if in_ranges(ts, ARP):
                 fq = note(arp[(s * 3 + b) % 4] + (12 if s % 8 == 7 else 0))
-                g = 0.2 if ts < 12 else 0.1
+                g = 0.2 if ts < 12 else 0.12
                 pan = -0.45 if s % 2 else 0.45
                 dry.add(pluck(fq), ts, g, pan=pan)
                 verb.add(pluck(fq), ts, g * 1.2)
@@ -294,8 +310,10 @@ def main(cue_path, out_path):
             dry.add(tick(), t, 0.16 * g, pan=0.15)
             verb.add(tick(), t, 0.06 * g)
         elif kind == 'whoosh':
-            w = whoosh(float(q.get('dur', 0.5)), bool(q.get('rev')))
-            start = t - 0.1
+            d, rev = float(q.get('dur', 0.5)), bool(q.get('rev'))
+            w = whoosh(d, rev)
+            # a reverse swell ends exactly when its animation does; a pass-by starts just before it
+            start = (t + d) - 0.97 * len(w) / SR if rev else t - 0.1
             dry.add(w, start, 0.42 * g)
             verb.add(w, start, 0.12 * g)
         elif kind == 'riser':
@@ -325,7 +343,8 @@ def main(cue_path, out_path):
     wet = np.stack([fftconvolve(wet_src[i], ir[i])[: n] for i in range(2)])
 
     mix = dry.stereo() + music + wet * 0.55
-    mix = np.stack([filt(ch, 'highpass', 28) for ch in mix])
+    mix = np.stack([filt(ch, 'highpass', 35) for ch in mix])
+    mix = mix - 0.5 * np.stack([filt(ch, 'lowpass', 100) for ch in mix])   # ≈ -6 dB low shelf at 100 Hz (phone speakers)
     mix = mix[:, : int(D * SR)]
 
     # gentle glue + loudness for social platforms (≈ -14 LUFS, peak < -1 dBFS)

@@ -32,12 +32,13 @@ Requisitos: Node 18+, `npm install` en la raíz (trae GSAP), Playwright con Chro
 node motion/render.mjs                       # → motion/out/nextro-motion.mp4 y nextro-motion-movil.mp4
 node motion/render.mjs --stills 2,9.6,30     # fotogramas sueltos en PNG → motion/build/stills/
 node motion/render.mjs --from 8 --to 12      # render parcial para revisar una escena
+node motion/render.mjs --reuse-frames        # reutiliza los fotogramas: solo rehace audio y MP4
 ```
 
 Salidas:
 
 - `out/nextro-motion.mp4`: máxima calidad (H.264 High, ~12 Mbps), para subir a Instagram o TikTok.
-- `out/nextro-motion-movil.mp4`: versión liviana (<25 MB) para mandar por WhatsApp o mail.
+- `out/nextro-motion-movil.mp4`: versión liviana (<25 MB) para mandar por WhatsApp o mail (es la que queda guardada en el repo).
 
 ## Editar
 
