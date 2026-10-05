@@ -1,0 +1,10 @@
+# Regenerable research captures (screenshots, frames) — kept local only
+assets/web/screens/
+assets/web/raw/
+assets/nextro/screens/
+assets/nextro/video-frames/
+assets/nextro/media/*.mp4
+assets/nextro/media/*REFERENCE-ONLY*
+# Render outputs and QA scratch
+studio/out/*.qa/
+studio/out/_*
