@@ -1,0 +1,50 @@
+{
+ "1-buscando": {
+  "id": "fe6f9fb8-53a4-4c95-83e8-ba72542d465f",
+  "title": "Rise and Grind",
+  "tags": "Future house electro-pop, clean modern mix with crisp transients and polished low end, bright plucky synth hooks over a punchy four-on-the-floor kick, instrumental, 124 BPM driving pulse with a short tense intro, quick riser build, and big euphoric drop.",
+  "duration": 162.0
+ },
+ "2-manifiesto": {
+  "id": "e9f00055-3c38-40ae-b3b7-f00cfb8a3311",
+  "title": "Night Drift",
+  "tags": "Drift phonk, 130 BPM driving trap pulse; aggressive punchy intro with no slow build, gritty saturated mix; sharp cowbell melody over heavy distorted 808 bass and hard-hitting trap drums.",
+  "duration": 106.44
+ },
+ "3-despegue-a": {
+  "id": "af9a4675-644e-4a6e-9bb3-301dcd19641a",
+  "title": "The Ticking Overture",
+  "tags": "Cinematic trailer, hybrid orchestral and synth, instrumental; ticking clock pulse beneath a rising string-and-synth ostinato, deep braams, a huge impact hit, then a soaring triumphant orchestral theme. Driving 100 BPM, inspiring and epic, with cinematic layering and a wide, polished mix.",
+  "duration": 126.24
+ },
+ "3-despegue-b": {
+  "id": "c8172450-2cfc-4d33-9554-29ff52155711",
+  "title": "The Ticking Overture",
+  "tags": "Cinematic trailer, driving 100 BPM pulse; polished cinematic mix with rising tension, ticking clock rhythm and swelling ostinato; deep braams, hybrid orchestral and synth layers, a massive impact hit into a soaring triumphant theme.",
+  "duration": 76.0
+ },
+ "4-pov": {
+  "id": "1c7f07b2-c91d-4b9f-826c-ac43e3c4cadf",
+  "title": "Cozy Afternoon",
+  "tags": "Lo-fi hip hop, instrumental; warm Rhodes piano chords over soft boom bap drums, mellow bass and vinyl crackle; gentle tape saturation; relaxed 85 BPM groove.",
+  "duration": 179.96
+ },
+ "5-trabajo": {
+  "id": "d5ca30e9-bd16-4e5c-bdbf-fc2ee775156a",
+  "title": "Latin Funk Groove",
+  "tags": "Nu-disco, buoyant 118 BPM groove with a tight disco drum mix, slap bass locked to the kick, crisp congas and shaker, clipped wah guitar, and bright brass stabs.",
+  "duration": 196.36
+ },
+ "6-rebrand": {
+  "id": "67174219-a7eb-4c3b-80dd-bd867425f2f0",
+  "title": "Cold to Warm",
+  "tags": "Ambient electronic, spare felt piano over airy electronic textures, gradually unfolding into warm pulsing synths and light percussion; stereo field slowly widens, polished cinematic mix; 90 BPM, steady unhurried pulse; instrumental.",
+  "duration": 188.8
+ },
+ "7-notis": {
+  "id": "e2862b0b-12a0-4de4-b2e4-bccdc4696b0c",
+  "title": "Playful Plucks",
+  "tags": "Minimal deep house, smooth 120 BPM groove, subtle tape saturation, crisp hi-hats, rubbery bass and playful plucks, tightly looped arrangement, instrumental",
+  "duration": 161.96
+ }
+}
