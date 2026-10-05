@@ -1,3 +1,4 @@
 build/
+__pycache__/
 out/*
 !out/nextro-motion-movil.mp4
