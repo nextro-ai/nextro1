@@ -17,6 +17,8 @@ export const punch = (frame: number, at: number, peak = 1.08, dur = 8) =>
 
 /** Camera shake offset in px that decays after `at`. */
 export const shake = (frame: number, at: number, amp = 18, dur = 10) => {
+  // No shake before the hit (interpolate's left clamp would otherwise return full strength).
+  if (frame < at) return { x: 0, y: 0 };
   const k = interpolate(frame, [at, at + dur], [1, 0], clamp);
   if (k <= 0) return { x: 0, y: 0 };
   const n = frame - at;
