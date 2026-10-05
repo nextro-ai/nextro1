@@ -12,7 +12,10 @@ Shared building blocks for every reel in `src/reels/<id>/`. Import from `../../b
   integrated (±1.5) and true peak ≤ −1 dBFS. Look at the contact sheet and frames before calling it done.
 - **No prices** anywhere (no "$", no "desde $…", no "ARS").
 - **Language**: Rioplatense Spanish with voseo (vendés, aparecés, escribinos). Check accents/ñ/¿¡.
-- **Safe zones** (`SAFE` in tokens): keep text, logo and CTA inside x 64…930, y 250…1500.
+- **Safe zones** (`SAFE` in tokens, house rule from docs/creative-research.md §2.2): text, logo and CTA
+  inside x 90…990, y 290…1240; from y 840 down nothing important right of x 880 (action rail).
+  Headlines in zone A (y 290…840); support text/cards in zone B (y 840…1240, x 90…880); final CTA+logo
+  in y 900…1240 centred, max 780 px wide. Below y 1240 and above y 290: imagery only.
   Decorative motion can bleed. Use `<SafeZone />` while developing (hidden in renders).
 - Text must be readable when it stays on screen: ≥ 3 words/s is too fast for body text; headlines can
   slam word by word on beats. Minimum body size 40 px, headlines 90–180 px.

@@ -14,7 +14,8 @@ import re
 import subprocess
 from PIL import Image, ImageDraw, ImageFont
 
-SAFE_TOP, SAFE_BOTTOM, SAFE_LEFT, SAFE_RIGHT = 250, 420, 64, 150
+SAFE_TOP, SAFE_BOTTOM, SAFE_LEFT, SAFE_RIGHT = 290, 680, 90, 90
+RAIL_Y, RAIL_RIGHT = 840, 200
 
 
 def probe(path):
@@ -65,7 +66,9 @@ def main():
     for idx, name in enumerate(frames):
         im = Image.open(os.path.join(fdir, name)).convert("RGB").resize((tw, th))
         g = ImageDraw.Draw(im)
-        g.rectangle([SAFE_LEFT * sx, SAFE_TOP * sx, tw - SAFE_RIGHT * sx, th - SAFE_BOTTOM * sx], outline=(255, 0, 90), width=1)
+        g.line([(SAFE_LEFT * sx, SAFE_TOP * sx), (tw - SAFE_RIGHT * sx, SAFE_TOP * sx), (tw - SAFE_RIGHT * sx, RAIL_Y * sx),
+                (tw - RAIL_RIGHT * sx, RAIL_Y * sx), (tw - RAIL_RIGHT * sx, th - SAFE_BOTTOM * sx),
+                (SAFE_LEFT * sx, th - SAFE_BOTTOM * sx), (SAFE_LEFT * sx, SAFE_TOP * sx)], fill=(255, 0, 90), width=1)
         x, y = (idx % a.cols) * tw, (idx // a.cols) * (th + 22)
         sheet.paste(im, (x, y + 22))
         d.text((x + 4, y + 3), f"{idx * a.every + a.every / 2:.1f}s", fill="black", font=font)

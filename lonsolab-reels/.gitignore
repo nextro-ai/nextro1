@@ -8,3 +8,5 @@ assets/nextro/media/*REFERENCE-ONLY*
 # Render outputs and QA scratch
 studio/out/*.qa/
 studio/out/_*
+# Generated music beds (rebuild with: python3 tools/cut_music.py)
+studio/public/music/*.wav

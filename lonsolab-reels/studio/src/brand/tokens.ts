@@ -31,14 +31,19 @@ export const H = 1920;
 export const FPS = 30;
 
 /**
- * Instagram / TikTok safe zones for 1080x1920.
- * Keep text, logos and CTAs inside SAFE. Decorative motion may bleed outside.
+ * Safe zones for 1080x1920 (house rule from docs/creative-research.md §2.2, valid for IG Reels,
+ * TikTok and Shorts). Text, logo and CTA live inside x 90..990, y 290..1240; from y 840 down,
+ * nothing important to the right of x 880 (action-button rail). Below y 1240 only imagery.
+ * Zone A (headlines): y 290..840. Zone B (support text, cards): y 840..1240, x 90..880.
+ * Final CTA + logo: y 900..1240, centred, max width 780 (x 150..930).
  */
 export const SAFE = {
-  top: 250, // status bar + "Reels" header / account row
-  bottom: 420, // caption, username, audio row, nav bar
-  left: 64,
-  right: 150, // like/comment/share column
+  top: 290,
+  bottom: 680, // 1920 - 1240
+  left: 90,
+  right: 90,
+  railFromY: 840,
+  railRight: 200, // 1080 - 880
 } as const;
 
 /** The 4:5 grid crop (1080x1350) is centred vertically: y 285..1635. */

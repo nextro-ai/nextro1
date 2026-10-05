@@ -11,3 +11,4 @@ export { SafeZone } from "./SafeZone";
 export { Phone } from "./Phone";
 export { Icon } from "./Icon";
 export type { IconName } from "./Icon";
+export { MUSIC, beatFrame } from "./musicCuts";

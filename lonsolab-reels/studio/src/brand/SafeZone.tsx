@@ -15,7 +15,8 @@ export const SafeZone: React.FC<{ show?: boolean; force?: boolean }> = ({ show =
     <AbsoluteFill style={{ pointerEvents: "none", zIndex: 9999 }}>
       <div style={{ position: "absolute", left: 0, right: 0, top: 0, height: SAFE.top, background: shade }} />
       <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: SAFE.bottom, background: shade }} />
-      <div style={{ position: "absolute", right: 0, top: SAFE.top, bottom: SAFE.bottom, width: SAFE.right, background: shade }} />
+      <div style={{ position: "absolute", right: 0, top: SAFE.top, height: SAFE.railFromY - SAFE.top, width: SAFE.right, background: shade }} />
+      <div style={{ position: "absolute", right: 0, top: SAFE.railFromY, bottom: SAFE.bottom, width: SAFE.railRight, background: shade }} />
       <div style={{ position: "absolute", left: 0, top: SAFE.top, bottom: SAFE.bottom, width: SAFE.left, background: shade }} />
     </AbsoluteFill>
   );
