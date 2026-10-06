@@ -1,0 +1,13 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      // Remotion Studio with every Lonso Lab reel (live preview of the videos)
+      "name": "lonsolab-reels-studio",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--", "--no-open", "--port=3000"],
+      "cwd": "lonsolab-reels/studio",
+      "port": 3000
+    }
+  ]
+}
