@@ -24,6 +24,29 @@ export const MUSIC = {
       }
     }
   },
+  "buscando_calma": {
+    "file": "music/buscando_calma.wav",
+    "song": "Rise and Grind",
+    "bpm": 132.1,
+    "beat_frames": 13.626,
+    "bar_frames": 54.5042,
+    "duration_s": 39.97,
+    "duration_frames": 1199,
+    "cues": {
+      "tension_bar": {
+        "s": 16.351,
+        "frame": 491
+      },
+      "drop": {
+        "s": 18.168,
+        "frame": 545
+      },
+      "energy_down_endcard": {
+        "s": 32.703,
+        "frame": 981
+      }
+    }
+  },
   "manifiesto": {
     "file": "music/manifiesto.wav",
     "song": "Night Drift",

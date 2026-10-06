@@ -22,6 +22,12 @@ CUTS = {
         "parts": [(112.961, 143.847)],
         "cues": {"tension_bar": 122.045, "drop": 123.862, "energy_down_endcard": 138.397},
     },
+    "buscando_calma": {
+        "song": "1-buscando", "title": "Rise and Grind", "bpm": 132.1,
+        # 22 bars (~40 s): 10 bars before the drop for a slower, clearer "hoy" story.
+        "parts": [(105.694, 145.664)],
+        "cues": {"tension_bar": 122.045, "drop": 123.862, "energy_down_endcard": 138.397},
+    },
     "manifiesto": {
         "song": "2-manifiesto", "title": "Night Drift", "bpm": 131.8,
         "parts": [(29.542, 51.393)],

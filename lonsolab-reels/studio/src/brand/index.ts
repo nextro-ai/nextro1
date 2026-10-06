@@ -12,3 +12,5 @@ export { Phone } from "./Phone";
 export { Icon } from "./Icon";
 export type { IconName } from "./Icon";
 export { MUSIC, beatFrame } from "./musicCuts";
+export { THEMES, THEME_IDS } from "./themes";
+export type { Theme } from "./themes";
