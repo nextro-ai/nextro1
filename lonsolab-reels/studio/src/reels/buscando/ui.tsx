@@ -295,7 +295,7 @@ export const NoPhotoIcon: React.FC<{ size: number; color: string }> = ({ size, c
 );
 
 /**
- * "Tu ferretería" before: grey, no photo, missing info.
+ * "Tu negocio" before: grey, no photo, missing info.
  * `big` (0..1) grows the type for the lifted close-up so it reads ≥ 44 px on canvas.
  */
 export const HoyTuCard: React.FC<{ style?: React.CSSProperties; boxed?: number; big?: number }> = ({ style, boxed = 0, big = 0 }) => {
@@ -313,7 +313,7 @@ export const HoyTuCard: React.FC<{ style?: React.CSSProperties; boxed?: number; 
         ...style,
       }}
     >
-      <div style={{ position: "absolute", left: 36, top: k(28, 20), ...font(k(40, 46), 700, "#8a90a3", 100) }}>Tu ferretería</div>
+      <div style={{ position: "absolute", left: 36, top: k(28, 20), ...font(k(40, 46), 700, "#8a90a3", 100) }}>Tu negocio</div>
       <div style={{ position: "absolute", left: 36, top: k(82, 78), ...font(k(29, 39), 400, "#868c9c") }}>
         Sin fotos · {big > 0.5 ? "1,8 km" : "Ferretería · 1,8 km"}
       </div>
@@ -342,7 +342,7 @@ export const HoyTuCard: React.FC<{ style?: React.CSSProperties; boxed?: number; 
 };
 
 /* Little illustrated "photos" of the business (flat SVG, no real images). */
-export const Thumb: React.FC<{ kind: "fachada" | "interior" | "herramientas"; w: number; h: number }> = ({ kind, w, h }) => (
+export const Thumb: React.FC<{ kind: "fachada" | "interior" | "herramientas" | "bolsa"; w: number; h: number }> = ({ kind, w, h }) => (
   <svg width={w} height={h} viewBox="0 0 200 104" preserveAspectRatio="xMidYMid slice" style={{ borderRadius: 16, display: "block" }}>
     {kind === "fachada" ? (
       <>
@@ -376,6 +376,16 @@ export const Thumb: React.FC<{ kind: "fachada" | "interior" | "herramientas"; w:
           </g>
         ))}
       </>
+    ) : kind === "bolsa" ? (
+      <>
+        <rect width="200" height="104" fill={C.cobaltoClaro} />
+        <path d="M84 36 C84 18 116 18 116 36" fill="none" stroke={C.tinta} strokeWidth="5" strokeLinecap="round" />
+        <rect x="68" y="34" width="64" height="62" rx="6" fill={C.papel} />
+        <path d="M100 52 c-8 0 -13 6 -13 12 c0 9 13 20 13 20 s13-11 13-20 c0-6-5-12-13-12z" fill={C.pin} />
+        <circle cx="100" cy="64" r="4.5" fill={C.tinta} />
+        <rect x="146" y="58" width="34" height="38" rx="5" fill={C.estrella} />
+        <rect x="20" y="64" width="34" height="32" rx="5" fill={C.cobalto} />
+      </>
     ) : (
       <>
         <rect width="200" height="104" fill="#13182b" />
@@ -390,7 +400,7 @@ export const Thumb: React.FC<{ kind: "fachada" | "interior" | "herramientas"; w:
   </svg>
 );
 
-/** "Tu ferretería" with Lonso Lab: complete profile, answered reviews, photos. */
+/** "Tu negocio" with Lonso Lab: complete profile, answered reviews, photos. */
 export const ConTuCard: React.FC<{ style?: React.CSSProperties; glow?: number; callPress?: number }> = ({ style, glow = 0, callPress = 0 }) => {
   const inner = SCREEN.w - 28 - 56;
   const tw = (inner - 24) / 3;
@@ -408,7 +418,7 @@ export const ConTuCard: React.FC<{ style?: React.CSSProperties; glow?: number; c
         ...style,
       }}
     >
-      <div style={{ position: "absolute", left: 28, top: 22, ...font(42, 700, C.tinta, 100), letterSpacing: "-0.01em" }}>Tu ferretería</div>
+      <div style={{ position: "absolute", left: 28, top: 22, ...font(42, 700, C.tinta, 100), letterSpacing: "-0.01em" }}>Tu negocio</div>
       <div style={{ position: "absolute", left: 28, top: 78, display: "flex", alignItems: "center", gap: 10, ...font(32, 600, C.tinta) }}>
         <span>4,9</span>
         <Stars n={5} size={28} />
@@ -632,7 +642,7 @@ const CallIcon: React.FC<{ kind: "mute" | "keypad" | "speaker"; size: number; co
 
 export type Callee = { name: string; initials: string; avatarBg: string; avatarFg: string; rating: string };
 export const CALLEE_CENTRAL: Callee = { name: "Ferretería Central", initials: "FC", avatarBg: "#39405a", avatarFg: C.blanco, rating: "4,8" };
-export const CALLEE_TU: Callee = { name: "Tu ferretería", initials: "TF", avatarBg: C.pin, avatarFg: C.tinta, rating: "4,9" };
+export const CALLEE_TU: Callee = { name: "Tu negocio", initials: "TN", avatarBg: C.pin, avatarFg: C.tinta, rating: "4,9" };
 
 /** Outgoing-call screen. `slide` 0..1 slides it up over the list (opaque: no text double-exposure). */
 export const CallScreen: React.FC<{ t: number; slide: number; who?: Callee }> = ({ t, slide, who = CALLEE_CENTRAL }) => {

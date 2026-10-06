@@ -198,7 +198,7 @@ const MapVisual: React.FC<{ t: number; h: number }> = ({ t, h }) => {
           transformOrigin: "50% 0%",
         }}
       >
-        <div style={{ fontSize: 44, fontWeight: 760, color: C.tinta, letterSpacing: "-0.01em", lineHeight: 1.1 }}>Tu ferretería</div>
+        <div style={{ fontSize: 44, fontWeight: 760, color: C.tinta, letterSpacing: "-0.01em", lineHeight: 1.1 }}>Tu negocio</div>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 8, fontSize: 32, fontWeight: 600, color: C.tinta }}>
           4,9 <Stars n={5} size={28} />
         </div>
@@ -231,7 +231,7 @@ const Storefront: React.FC<{ w: number; h: number }> = ({ w, h }) => (
     <rect x="28" y="50" width="624" height="30" rx="4" fill={C.tinta} />
     <rect x="160" y="98" width="360" height="62" rx="12" fill={C.tinta} />
     <text x="340" y="141" textAnchor="middle" fontFamily={FONT} fontWeight={800} fontSize="36" letterSpacing="5" fill={C.papel}>
-      FERRETERÍA
+      TU NEGOCIO
     </text>
     {/* awning */}
     {Array.from({ length: 14 }).map((_, i) => (
@@ -316,9 +316,9 @@ const PostCard: React.FC<{ pw: number; t: number; second?: boolean }> = ({ pw, t
             color: C.tinta,
           }}
         >
-          TF
+          TN
         </div>
-        <span style={{ fontSize: 32, fontWeight: 700, color: C.tinta }}>Tu ferretería</span>
+        <span style={{ fontSize: 32, fontWeight: 700, color: C.tinta }}>Tu negocio</span>
         {!second ? (
           <span
             style={{
@@ -427,8 +427,8 @@ const WebVisual: React.FC<{ t: number; h: number }> = ({ t, h }) => {
             </div>
           </div>
           <div style={{ padding: "26px 36px 0", height: 176, boxSizing: "border-box" }}>
-            <div style={{ fontSize: 46, fontWeight: 800, color: C.tinta, letterSpacing: "-0.02em", lineHeight: 1.1 }}>Tu ferretería</div>
-            <div style={{ marginTop: 10, fontSize: 30, color: C.tinta2 }}>Herramientas, pinturas y más.</div>
+            <div style={{ fontSize: 46, fontWeight: 800, color: C.tinta, letterSpacing: "-0.02em", lineHeight: 1.1 }}>Tu negocio</div>
+            <div style={{ marginTop: 10, fontSize: 30, color: C.tinta2 }}>Lo que buscás, cerca tuyo.</div>
             <div style={{ marginTop: 6, fontSize: 29, fontWeight: 700, color: "#1d7a3e" }}>Abierto ahora</div>
           </div>
           <div style={{ padding: "0 36px", position: "relative" }}>
@@ -489,7 +489,7 @@ const WebVisual: React.FC<{ t: number; h: number }> = ({ t, h }) => {
             </div>
           </div>
           <div style={{ padding: "30px 36px 0", display: "flex", gap: 18 }}>
-            {(["herramientas", "fachada", "interior"] as const).map((k) => (
+            {(["fachada", "interior", "bolsa"] as const).map((k) => (
               <div key={k} style={{ flex: 1, borderRadius: 16, overflow: "hidden" }}>
                 <Thumb kind={k} w={(bw - 72 - 36) / 3} h={150} />
               </div>

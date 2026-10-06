@@ -16,12 +16,24 @@ const LOGO_TOP = 806;
 const MARK_W = LOGO_W * (1013 / 5899);
 const PHONE_TOP = 1078;
 const URL_TOP = 1168;
+const RUBROS = ["ferretería", "peluquería", "gimnasio", "pizzería", "veterinaria", "lo que vendés"] as const;
+const FLIP_EVERY = 7; // ≈ half a beat at 132 BPM
+const SUFFIX = " cerca de mí";
 
 export const Closing: React.FC = () => {
   const f = useCurrentFrame();
   if (f < T.calm) return null;
+  // The search is typed once (the opening's example), then the trade word flips on half-beats
+  // through other industries and lands on "lo que vendés": the reel speaks to every rubro.
   const typedStart = T.calm + 5;
-  const n = Math.max(0, Math.min(SEARCH_TEXT.length, Math.floor((f - typedStart) / 2) + 1));
+  const n = Math.max(0, Math.min(SEARCH_TEXT.length, f - typedStart + 1));
+  const flipStart = typedStart + SEARCH_TEXT.length + 2; // 792
+  const flipIdx = f < flipStart ? 0 : Math.min(RUBROS.length - 1, 1 + Math.floor((f - flipStart) / FLIP_EVERY));
+  const flipAt = flipIdx === 0 ? -99 : flipStart + (flipIdx - 1) * FLIP_EVERY;
+  const flipP = ip(f, [flipAt, flipAt + 4], [0, 1], eo);
+  const rubro = RUBROS[flipIdx];
+  const prevRubro = flipIdx > 0 ? RUBROS[flipIdx - 1] : null;
+  const isFinal = flipIdx === RUBROS.length - 1;
   const pillIn = sp(f, T.calm + 2, 16, 140);
   const m = ip(f, [T.end - 2, T.end + 8], [0, 1], io); // search → button morph
   const pillY = ip(f, [T.end - 4, T.end + 10], [PILL_Y0, PILL_Y1], eo);
@@ -142,8 +154,36 @@ export const Closing: React.FC = () => {
           }}
         >
           <Icon name="buscar" size={44} color={C.tinta2} strokeWidth={2.2} />
-          <span style={{ fontSize: 44, fontWeight: 450, color: C.tinta, whiteSpace: "nowrap" }}>{SEARCH_TEXT.slice(0, n)}</span>
-          <span style={{ width: 4, height: 50, marginLeft: -18, background: C.cobalto, opacity: cursorOn || n < SEARCH_TEXT.length ? 1 : 0 }} />
+          {f < flipStart ? (
+            <>
+              <span style={{ fontSize: 44, fontWeight: 450, color: C.tinta, whiteSpace: "nowrap" }}>{SEARCH_TEXT.slice(0, n)}</span>
+              <span style={{ width: 4, height: 50, marginLeft: -18, background: C.cobalto, opacity: cursorOn || n < SEARCH_TEXT.length ? 1 : 0 }} />
+            </>
+          ) : (
+            <span style={{ fontSize: 44, fontWeight: 450, color: C.tinta, whiteSpace: "nowrap", display: "flex", alignItems: "center" }}>
+              {/* slot-machine flip of the trade word */}
+              <span style={{ position: "relative", display: "inline-block", height: 60, clipPath: "inset(0 -600px 0 -20px)" }}>
+                {prevRubro && flipP < 1 ? (
+                  <span style={{ position: "absolute", left: 0, top: 0, lineHeight: "60px", translate: `0 ${-flipP * 60}px`, opacity: 1 - flipP }}>
+                    {prevRubro}
+                  </span>
+                ) : null}
+                <span
+                  style={{
+                    display: "inline-block",
+                    lineHeight: "60px",
+                    translate: `0 ${(1 - flipP) * 60}px`,
+                    opacity: flipP,
+                    color: isFinal ? C.pin : C.tinta,
+                    fontWeight: isFinal ? 700 : 450,
+                  }}
+                >
+                  {rubro}
+                </span>
+              </span>
+              <span style={{ whiteSpace: "pre" }}>{SUFFIX}</span>
+            </span>
+          )}
         </div>
         {/* button content */}
         <div

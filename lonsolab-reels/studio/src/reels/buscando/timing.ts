@@ -25,7 +25,7 @@ export const T = {
   drop: bar(6), // 327 (cue drop)
   conPin: beat(25), // 341
   conTap: beat(30), // 409: a customer taps YOUR call button
-  conCall: beat(31), // 422: "Llamando a Tu ferretería…" (mirror of the competitor call)
+  conCall: beat(31), // 422: "Llamando a Tu negocio…" (mirror of the competitor call)
   notifs: bar(8), // 436
   heroCall: bar(10), // 545
   cards: [bar(11), bar(12), beat(51)] as const, // 600 654 695 (card 03 a beat early so it reads ≥ 54 f)

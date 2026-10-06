@@ -38,7 +38,7 @@ export const sfOf = (f: number) => {
   return REWIND_TO;
 };
 
-/* a short scroll: the map slides under the search bar and "Tu ferretería" ends up at the
+/* a short scroll: the map slides under the search bar and "Tu negocio" ends up at the
    bottom of the visible list, with the three competitors (stars, "Abierto ahora") above it */
 const SCROLL_MAX = 100;
 const scrollOf = (sf: number) => SCROLL_MAX * sp(sf, T.scroll - 2, 26, 120) * (1 - ip(sf, [T.liftBack - 1, T.tap - 4], [0, 1], io));
@@ -242,7 +242,7 @@ const HoyScreen: React.FC<{ sf: number; f: number }> = ({ sf, f }) => {
 };
 
 /**
- * The "Tu ferretería" card lifting out of the screen toward the camera (phone coords): it rises
+ * The "Tu negocio" card lifting out of the screen toward the camera (phone coords): it rises
  * from its slot at the bottom of the list to hover over the map, above the three competitors,
  * big enough that its red flags read ≥ 44 px.
  */
