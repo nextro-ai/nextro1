@@ -28,7 +28,7 @@ Las skills se usan pidiéndoselo a Claude en este repo: «analizá este reel», 
 - **Fecha límite: viernes 9/10 a las 11:00, hora de Argentina.** La promo cierra el 9/10 a las 23:59, sin zona horaria confirmada.
 - **Comprá solo si se cumplen las tres:** el checkout muestra USD 240 en total; pagás con dólares propios; hay al menos 1 cliente que paga contenido generado todos los meses ([memo §1.1](higgsfield-conviene.md#11-qué-cuenta-como-cliente-que-paga-contenido-generado)).
 - **Si falta alguna, no se compra.** Hoy no figura ningún cliente así confirmado: completá el dato antes de decidir. Para un trabajo pago puntual, PRO mensual (USD 29) ese mes o el plan B (USD 20 a 38 por mes, sin compromiso).
-- **No al MAX.** Y por MCP siempre se cobran créditos, aun en los modelos «ilimitados»: lo ilimitado se hace a mano en higgsfield.ai, y ningún crédito se gasta sin el OK de Terra con el costo a la vista.
+- **No al MAX ni a los planes de equipo (Team, Escala)**: cobran por usuario y el crédito sale el doble ([memo §2.5](higgsfield-conviene.md#25-planes-business-team-y-escala-no-convienen)). Y por MCP siempre se cobran créditos, aun en los modelos «ilimitados»: lo ilimitado se hace a mano en higgsfield.ai, y ningún crédito se gasta sin el OK de Terra con el costo a la vista.
 
 ## Líneas de servicio y precio «desde»
 

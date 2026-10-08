@@ -24,7 +24,7 @@
    - pagás **con dólares propios**;
    - hay **al menos 1 cliente que paga contenido generado**, según la definición de §1.1.
 4. **Si falla alguna, no compres el anual** (perder la promo cuesta ~USD 36 al año contra el anual de lista): **PRO mensual (USD 29) un mes** cuando haya un trabajo pago concreto, o **plan B** (§6.1, USD 20–38/mes, sin compromiso).
-5. **No al MAX hoy** (ni el 1.800, ni el 3.600, ni el 5.400). Empieza a convenir por encima de **~1.140 créditos/mes, todos los meses** (§4.2), y la cuenta no registra ni un uso desde el 31-jul. Además, el MAX 1.800 anual se llevaría el 49 % de un Redes de $190.000 (§4.3).
+5. **No al MAX hoy** (ni el 1.800, ni el 3.600, ni el 5.400). Empieza a convenir por encima de **~1.140 créditos/mes, todos los meses** (§4.2), y la cuenta no registra ni un uso desde el 31-jul. Además, el MAX 1.800 anual se llevaría el 49 % de un Redes de $190.000 (§4.3). **Tampoco los planes Business (Team o Escala)**: cobran por usuario y el crédito sale el doble que en el PRO, sin ilimitados (§2.5).
 6. **Con los precios de lonsolab.com la herramienta entra, si lo generado es complemento:** el PRO anual pesa ~20 % de un Redes de $190.000 y ~13 % de Redes + Maps. El **100 % generado dentro del abono base** no entra (hasta 39 %): el video generado premium se cobra aparte (§4.3).
 7. **Por MCP siempre se cobran créditos, incluso en los modelos "ilimitados"**: lo ilimitado se genera a mano en higgsfield.ai (§3.4).
 
@@ -89,6 +89,8 @@ Precios de las capturas de la landing: el precio promo es por mes, con pago anua
 | MAX 1.800 mensual | 0,0439 | 81,8 |
 | PRO mensual | 0,0483 | 90,1 |
 | Recarga (solo con plan pago; vence a los 90 días) | 0,0556 | 103,5 |
+| ESCALA anual (Business, por usuario) | 0,0600 | 111,9 |
+| TEAM anual (Business, por usuario) | 0,0650 | 121,2 |
 
 **Lectura:** el PRO promo sale más barato por crédito que el PLUS. El MAX es más barato **solo si gastás todos los créditos**: un crédito que no usás cuesta lo mismo y no rinde nada.
 
@@ -97,6 +99,23 @@ Precios de las capturas de la landing: el precio promo es por mes, con pago anua
 - Plan **free**, con **1,5 créditos**. Sin plan pago no se pueden comprar recargas.
 - La prueba ilimitada venció el **31-jul-2026**: 103 movimientos, todos el 30 y 31 de julio. **Ninguno después.**
 - Seedance 2.0 tuvo **27 % de fallas** (17 de 63, reembolsadas). Los ~46 clips que sirvieron habrían costado **~1.012 créditos** pagos (5 s en 720p): 1,7 meses de PRO en un día.
+
+### 2.5 Planes Business (Team y Escala): no convienen
+
+Vistos en higgsfield.ai/es/pricing, pestaña *Planes Business*, pago anual, el 8-oct-2026. **El precio es por usuario y por mes**, no el total: los 5.000 créditos que muestra el Team son de 5 usuarios (1.000 cada uno).
+
+| Plan (anual) | Usuarios | USD/mes en total | ARS/mes (dólares propios + IVA) | Créditos/mes | USD por crédito | Ilimitados |
+|---|---|---|---|---|---|---|
+| PRO promo (individual) | 1 | 20 | ≈ 37.300 | 600 | 0,033 | 6 modelos de imagen por 365 días + 5.000 Soul |
+| MAX 5.400 promo (individual) | 1 | 119 | ≈ 222.000 | 5.400 | 0,022 | Los mismos + 10.000 Soul |
+| TEAM (tachado 79, USD 65 por usuario) | 2 (mínimo) | 130 | ≈ 242.000 | 2.000 | 0,065 | **Ninguno** |
+| TEAM | 5 | 325 | ≈ 606.000 | 5.000 | 0,065 | Ninguno |
+| ESCALA (tachado 215, USD 150 por usuario) | 5 (mínimo) | 750 | ≈ 1.399.000 | 12.500 | 0,060 | Nano Banana Pro, Seedream 5.0 Pro y Kling 3.0 **solo 7 días** |
+
+- **El crédito del Team cuesta el doble que en el PRO promo** y no trae ningún modelo ilimitado. Por casi lo mismo que un Team de 2 usuarios (USD 130), el **MAX 5.400 individual (USD 119)** da 2,7 veces más créditos y suma los ilimitados.
+- **Lo único que suman los Business** es que varias personas usen una bolsa de créditos compartida sin violar la regla de no compartir cuentas, más facturación centralizada, estadísticas y cola prioritaria (Escala). Hoy genera solo Terra: no hace falta.
+- **Si algún día generan los tres**, conviene que cada uno tenga su PRO individual: 3 × USD 20 = USD 60/mes, con 1.800 créditos y los ilimitados de cada uno. Un Team de 3 cuesta USD 195/mes, con 3.000 créditos y sin ilimitados.
+- La misma página aclara que los ilimitados y las generaciones gratis **solo funcionan en higgsfield.ai, no por MCP/CLI, Canvas ni Supercomputer**, y que los precios no incluyen IVA ni impuestos locales.
 
 ---
 
