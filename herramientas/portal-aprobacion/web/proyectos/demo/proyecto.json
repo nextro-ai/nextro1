@@ -1,0 +1,17 @@
+{
+  "estudio": "LonsoLab · Sala de revisión",
+  "pieza": "Reel · Tu negocio en Google Maps",
+  "cliente": "un cliente de ejemplo",
+  "entrega": "2026-10-10",
+  "versiones": [
+    { "id": "v1", "archivo": "v1.mp4", "poster": "v1.jpg", "fecha": "2026-10-08", "nota": "Primera versión para revisar." },
+    { "id": "v2", "archivo": "v2.mp4", "poster": "v2.jpg", "fecha": "2026-10-08", "nota": "La tarjeta 2 dice “Fotos viejas” y el “gratis” del cierre quedó más grande." }
+  ],
+  "ejemplos": {
+    "comentarios": [
+      { "id": "ej1", "version": "v1", "segundo": 5.8, "autor": "Cliente (ejemplo)", "texto": "¿Podemos poner “Fotos viejas” en vez de “Fotos de hace años”? Es más corto.", "estado": "resuelto", "creado": "2026-10-08T10:12:00-03:00" },
+      { "id": "ej2", "version": "v1", "segundo": 11.2, "autor": "Cliente (ejemplo)", "texto": "Me encanta el cierre. Que el “gratis” se vea más grande.", "estado": "resuelto", "creado": "2026-10-08T10:14:00-03:00" },
+      { "id": "ej3", "version": "v1", "segundo": null, "autor": "Cliente (ejemplo)", "texto": "En general está muy bien. La música la elijo yo desde Instagram.", "estado": "abierto", "creado": "2026-10-08T10:15:00-03:00" }
+    ]
+  }
+}
