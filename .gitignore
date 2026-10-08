@@ -1,3 +1,5 @@
 node_modules/
 dist/
 .npmrc
+analisis-video/
+__pycache__/

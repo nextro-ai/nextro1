@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Reel Google Maps</title>
+<style>
+  :root {
+    --bg: #0E0E10;
+    --card: #1A1A1E;
+    --card-hi: #FAFAFA;
+    --ink: #FAFAFA;
+    --ink-dark: #0A0A0A;
+    --muted: #A3A3A3;
+    --blue: #3B82F6;
+    --green: #22C55E;
+    --orange: #F97316;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--bg); }
+  body { font-family: "Inter", "Inter Display", sans-serif; color: var(--ink); position: relative; }
+
+  .scene { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; }
+
+  /* fondo: grilla sutil + halo azul */
+  #bg { position: absolute; inset: 0;
+    background:
+      radial-gradient(900px 900px at 50% 38%, rgba(59,130,246,0.22), transparent 70%),
+      linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px) 0 0 / 90px 90px,
+      linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px) 0 0 / 90px 90px;
+  }
+
+  /* escena 1: gancho */
+  #s1 { justify-content: center; gap: 56px; padding: 0 90px; text-align: center; }
+  #pin { width: 260px; height: 260px; }
+  #h1a { font-size: 112px; font-weight: 800; letter-spacing: -4px; line-height: 1.02; }
+  #h1a span { color: var(--blue); }
+  #h1b { font-size: 64px; font-weight: 600; color: var(--muted); line-height: 1.15; letter-spacing: -1px; }
+
+  /* escena 2: tarjetas */
+  #s2 { justify-content: center; padding: 0 90px 260px; gap: 40px; }
+  #s2title { font-size: 72px; font-weight: 800; letter-spacing: -2.5px; line-height: 1.05; text-align: center; margin-bottom: 30px; }
+  #s2title span { color: var(--blue); }
+  .card { width: 880px; border-radius: 56px; background: var(--card); display: flex; align-items: center; gap: 44px; padding: 44px 52px;
+    border: 2px solid rgba(255,255,255,0.06); }
+  .card.hi { background: var(--card-hi); color: var(--ink-dark); border-color: transparent; box-shadow: 0 30px 80px rgba(59,130,246,0.35); }
+  .ico { flex: none; width: 150px; height: 150px; border-radius: 50%; display: grid; place-items: center; background: rgba(59,130,246,0.14); }
+  .card.hi .ico { background: rgba(249,115,22,0.16); }
+  .ico svg { width: 84px; height: 84px; }
+  .txt { display: flex; flex-direction: column; gap: 10px; }
+  .num { font-size: 34px; font-weight: 700; color: var(--blue); letter-spacing: 2px; }
+  .card.hi .num { color: var(--orange); }
+  .lab { font-size: 58px; font-weight: 800; letter-spacing: -1.5px; line-height: 1.05; }
+  .sub { font-size: 38px; font-weight: 500; color: var(--muted); line-height: 1.2; }
+  .card.hi .sub { color: #525252; }
+
+  /* escena 3: CTA */
+  #s3 { justify-content: center; gap: 56px; padding: 0 80px 300px; text-align: center; }
+  #c1 { font-size: 66px; font-weight: 700; color: var(--muted); letter-spacing: -1px; }
+  #kw { font-size: 98px; font-weight: 900; letter-spacing: -2px; background: var(--blue); color: #fff; padding: 24px 44px 30px; border-radius: 40px;
+    box-shadow: 0 30px 90px rgba(59,130,246,0.5); white-space: nowrap; }
+  #caret { display: inline-block; width: 10px; height: 84px; background: #fff; margin-left: 14px; vertical-align: -12px; }
+  #c2 { font-size: 62px; font-weight: 700; line-height: 1.15; letter-spacing: -1px; }
+  #c2 span { color: var(--green); }
+  #brand { position: absolute; bottom: 430px; left: 0; right: 0; text-align: center; font-size: 44px; font-weight: 800; letter-spacing: 10px; color: var(--ink); }
+  #brand small { display: block; font-size: 28px; font-weight: 500; letter-spacing: 3px; color: var(--muted); margin-top: 14px; }
+
+  /* barra de progreso tipo historia */
+  #prog { position: absolute; top: 70px; left: 70px; right: 70px; height: 8px; border-radius: 8px; background: rgba(255,255,255,0.12); overflow: hidden; }
+  #progfill { height: 100%; width: 0; background: var(--blue); }
+</style>
+</head>
+<body>
+  <div id="bg"></div>
+  <div id="prog"><div id="progfill"></div></div>
+
+  <section class="scene" id="s1">
+    <svg id="pin" viewBox="0 0 24 24" fill="none">
+      <path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z" fill="#3B82F6"/>
+      <circle cx="12" cy="10" r="2.8" fill="#0E0E10"/>
+    </svg>
+    <div id="h1a">Tu negocio en <span>Google&nbsp;Maps</span></div>
+    <div id="h1b">¿te está haciendo perder clientes?</div>
+  </section>
+
+  <section class="scene" id="s2">
+    <div id="s2title">3 errores comunes<br>en las <span>fichas de Google</span></div>
+
+    <div class="card" id="k1">
+      <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+      <div class="txt"><div class="num">01</div><div class="lab">Horarios viejos</div><div class="sub">El cliente va… y está cerrado.</div></div>
+    </div>
+    <div class="card" id="k2">
+      <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></div>
+      <div class="txt"><div class="num">02</div><div class="lab">Fotos de hace años</div><div class="sub">La primera impresión es la foto.</div></div>
+    </div>
+    <div class="card" id="k3">
+      <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8M8 13h5"/></svg></div>
+      <div class="txt"><div class="num">03</div><div class="lab">Reseñas sin respuesta</div><div class="sub">Los clientes (y Google) lo notan.</div></div>
+    </div>
+  </section>
+
+  <section class="scene" id="s3">
+    <div id="c1">Comentá</div>
+    <div id="kw">DIAGNÓSTICO<span id="caret"></span></div>
+    <div id="c2">y te revisamos tu ficha<br><span>gratis</span>.</div>
+    <div id="brand">LONSOLAB<small>presencia online para negocios</small></div>
+  </section>
+
+<script>
+  // Animación determinística: render(t) dibuja el cuadro exacto del segundo t.
+  const DURATION = 13.0;
+  const $ = (id) => document.getElementById(id);
+  const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+  const prog = (t, start, dur) => clamp((t - start) / dur);
+  const easeOut = (x) => 1 - Math.pow(1 - x, 3);
+  const easeInOut = (x) => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+  const backOut = (x) => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+
+  function set(el, { o = 1, x = 0, y = 0, s = 1 } = {}) {
+    el.style.opacity = o;
+    el.style.transform = `translate(${x}px, ${y}px) scale(${s})`;
+  }
+
+  // ventana de visibilidad de una escena con fundido de entrada/salida
+  function sceneAlpha(t, a, b, f = 0.35) { return Math.min(prog(t, a, f), 1 - prog(t, b - f, f)); }
+
+  window.render = function (t) {
+    $('progfill').style.width = (clamp(t / DURATION) * 100) + '%';
+
+    // Escena 1: 0 – 3.0 s
+    const a1 = sceneAlpha(t, 0, 3.0);
+    $('s1').style.opacity = a1;
+    const pinIn = backOut(prog(t, 0.05, 0.6));
+    const bounce = Math.sin(clamp(t - 0.7, 0, 10) * 4) * 10 * (t > 0.7 ? 1 : 0);
+    set($('pin'), { o: prog(t, 0.05, 0.25), y: (1 - pinIn) * -260 + bounce });
+    set($('h1a'), { o: prog(t, 0.45, 0.4), y: (1 - easeOut(prog(t, 0.45, 0.5))) * 60 });
+    set($('h1b'), { o: prog(t, 1.15, 0.4), y: (1 - easeOut(prog(t, 1.15, 0.5))) * 40 });
+
+    // Escena 2: 2.9 – 9.6 s  (una tarjeta resaltada por vez, las anteriores quedan atenuadas)
+    const a2 = sceneAlpha(t, 2.9, 9.6);
+    $('s2').style.opacity = a2;
+    set($('s2title'), { o: prog(t, 3.0, 0.4), y: (1 - easeOut(prog(t, 3.0, 0.5))) * 40 });
+    const starts = [3.7, 5.5, 7.3];
+    ['k1', 'k2', 'k3'].forEach((id, i) => {
+      const el = $(id);
+      const p = easeOut(prog(t, starts[i], 0.55));
+      const next = starts[i + 1];
+      const active = t >= starts[i] && (next === undefined || t < next);
+      el.classList.toggle('hi', active);
+      const dim = active || t < starts[i] ? 1 : 0.38;
+      set(el, { o: p * dim, x: (1 - p) * 220, s: active ? 1 + 0.03 * Math.sin(clamp(t - starts[i], 0, 0.3) / 0.3 * Math.PI) : 1 });
+    });
+
+    // Escena 3: 9.5 – 13 s
+    const a3 = prog(t, 9.5, 0.35);
+    $('s3').style.opacity = a3;
+    set($('c1'), { o: prog(t, 9.6, 0.3), y: (1 - easeOut(prog(t, 9.6, 0.4))) * 40 });
+    const kwIn = backOut(prog(t, 9.85, 0.55));
+    set($('kw'), { o: prog(t, 9.85, 0.2), s: 0.6 + 0.4 * kwIn });
+    $('caret').style.opacity = Math.floor(t * 2.2) % 2 === 0 ? 1 : 0;
+    set($('c2'), { o: prog(t, 10.5, 0.35), y: (1 - easeOut(prog(t, 10.5, 0.45))) * 40 });
+    set($('brand'), { o: prog(t, 11.1, 0.5) });
+  };
+
+  window.DURATION = DURATION;
+  render(0);
+</script>
+</body>
+</html>
