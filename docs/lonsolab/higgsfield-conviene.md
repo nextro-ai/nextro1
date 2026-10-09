@@ -18,7 +18,7 @@
 ## 1. Respuesta corta
 
 1. **Sí, con condiciones, y solo el PRO anual de USD 240** (USD 20/mes; unos ARS 37.300/mes con dólares propios, IVA incluido).
-2. **Plazo:** la promo cierra el **viernes 9-oct-2026 a las 23:59**, sin zona horaria en las capturas **[a validar]**. En hora de Argentina: 20:59 si es UTC; 17:59 a 19:59 si es Europa; 11:59 a 12:59 si es Asia oriental; 03:59 del sábado 10 si es el Pacífico de EE. UU. **Por eso: decidí y, si corresponde, comprá a más tardar el viernes 9 a las 11:00 (hora de Argentina).**
+2. **Plazo:** la promo cierra el **viernes 9-oct-2026 a las 23:59**, sin zona horaria en las capturas **[a validar]**. En hora de Argentina: 20:59 si es UTC; 17:59 a 19:59 si es Europa; 11:59 a 12:59 si es Asia oriental; 03:59 del sábado 10 si es el Pacífico de EE. UU. **Por eso: decidí y, si corresponde, comprá a más tardar el viernes 9 a las 11:00 (hora de Argentina).** **Actualización del 9-oct, 02:06 (Argentina):** la configuración de precios de Higgsfield pasó de «Buy until: Oct 9» a «Buy until: Oct 10», con los mismos precios y los mismos ilimitados de 365 días. La fecha límite se corre: es una cuenta regresiva de marketing, así que no hace falta apurarse. Las tres condiciones siguen valiendo igual.
 3. **Comprá solo si se cumplen las tres condiciones:**
    - el checkout (pantalla de pago) muestra **PRO anual por USD 240 en total**;
    - pagás **con dólares propios**;
